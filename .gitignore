@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.env/
+*.env
+
+# Django stuff
+*.log
+db.sqlite3
+media/
+staticfiles/
+static/
+
+# React build
+frontend/node_modules/
+frontend/build/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# dotenv
+.env.*
+
+# PyInstaller
+*.spec
+
+# Coverage reports
+htmlcov/
+coverage.xml
+
+# IDEs
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Others
+*.bak
+*.swp
