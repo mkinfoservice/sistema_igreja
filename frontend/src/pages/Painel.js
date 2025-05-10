@@ -1,21 +1,32 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function Painel() {
-  const handleLogout = () => {
-    localStorage.removeItem('access');
-    localStorage.removeItem('refresh');
-    window.location.href = '/login';
-  };
+  const [usuario, setUsuario] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('access');
+    if (token) {
+      axios.get('http://localhost:8000/api/usuario/me/', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(res => setUsuario(res.data))
+      .catch(err => console.error(err));
+    }
+  }, []);
+
+  if (!usuario) return <p>Carregando...</p>;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-green-100">
-      <h1 className="text-3xl font-bold mb-4">Bem-vindo ao Painel!</h1>
-      <button
-        onClick={handleLogout}
-        className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600"
-      >
-        Sair
-      </button>
+    <div style={{ maxWidth: 600, margin: '0 auto', padding: 20 }}>
+      <h2>Painel do Usuário</h2>
+      <p><strong>ID:</strong> {usuario.id}</p>
+      <p><strong>Usuário:</strong> {usuario.username}</p>
+      <p><strong>Email:</strong> {usuario.email}</p>
+      <p><strong>Admin:</strong> {usuario.is_superuser ? 'Sim' : 'Não'}</p>
     </div>
   );
 }
