@@ -1,24 +1,68 @@
 
-# Sistema Igreja - Plataforma Web Django + React
+# Sistema Igreja - Plataforma de Gestão 100% em Nuvem
 
-Este projeto é um sistema completo de gerenciamento para igrejas, com funcionalidades em desenvolvimento como:
+Este projeto é uma solução completa para o gerenciamento de igrejas, com módulos essenciais como cadastro de membros, emissão de certificados, controle financeiro, sala virtual e mais. Ele utiliza tecnologias modernas para garantir desempenho, segurança e facilidade de uso.
 
-- Cadastro de membros
-- Certificados e relatórios
-- Gestão financeira
-- Sala virtual para transmissões ao vivo
-- Sistema 100% em nuvem
+## ✅ Tecnologias Utilizadas
 
-## 📅 Linha do tempo do desenvolvimento
+### Backend:
+- **Django**
+- **Django Rest Framework**
+- **Autenticação personalizada com `usuarios.User`**
+- **SQLite (desenvolvimento) / PostgreSQL (produção futura)**
+- **Deploy: Railway (previsto)**
 
-1. **Configuração Inicial (Django + React)**
-2. **Criação de modelo de usuário customizado `usuarios.Usuario`**
-3. **Integração JWT e autenticação protegida entre frontend e backend**
-4. **Login funcional com Django + React**
-5. **Criação de rotas protegidas e design de tela de login**
-6. **Upload do projeto para GitHub e sincronização multi-dispositivo**
-7. **[Status Atual]**: Projeto está sincronizado com GitHub, autenticação funcional, iniciando estilização e implementação de funcionalidades principais
+### Frontend:
+- **React 18**
+- **TailwindCSS 3.4.7**
+- **React Router DOM 7.6**
+- **Chart.js e React-Chartjs-2**
 
+---
+
+## 📌 Status Atual do Projeto
+
+### ✅ Concluído até agora:
+- Estrutura base Django + React integrada
+- Modelo de usuário personalizado configurado (`usuarios.User`)
+- App `usuarios` e autenticação funcional
+- Projeto React criado e funcionando com TailwindCSS 3.4.7
+- Frontend já com layout inicial e dashboard básico em andamento
+- Primeiros commits feitos e versionamento no Git iniciado
+
+---
+
+## 🚧 Etapas Pendentes
+
+### Backend:
+- [ ] Criar os módulos:
+  - [ ] Cadastro de Membros
+  - [ ] Emissão de Certificados
+  - [ ] Relatórios e Gráficos
+  - [ ] Gestão Financeira
+  - [ ] Sala Virtual (com integração de live)
+- [ ] Implementar testes automatizados
+- [ ] Configurar banco PostgreSQL para produção
+
+### Frontend:
+- [ ] Interface de login e cadastro conectada ao backend
+- [ ] Páginas para cada módulo
+- [ ] Consumo da API Django com Axios
+- [ ] Interface mobile-first responsiva
+
+### Infra:
+- [ ] Deploy do backend na Railway
+- [ ] Deploy do frontend na Vercel
+- [ ] Configuração do domínio e certificado SSL
+
+---
+
+## 🚀 Como Executar Localmente
+
+### Backend (Django)
+```bash
+cd backend
+python manage.py runserver
 ## 🚀 Como rodar o projeto
 
 ### Backend (Django)
@@ -43,6 +87,11 @@ npm install
 npm start
 ```
 
+sistema_igreja/
+├── backend/          # Projeto Django
+├── frontend/         # Aplicação React com Tailwind
+└── README.md
+
 ## 🧠 Contribuição e Sincronização (2 dispositivos)
 
 - Faça `git clone` do repositório nas duas máquinas
@@ -52,4 +101,4 @@ npm start
 
 ---
 
-Desenvolvido com 💻 por [Seu Nome]
+Desenvolvido com 💻 por Maykon Douglas
