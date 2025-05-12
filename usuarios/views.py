@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import UsuarioSerializer  # Criaremos esse serializer
 from .models import Usuario
+from django.http import JsonResponse
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -13,5 +14,10 @@ def usuario_me(request):
     serializer = UsuarioSerializer(usuario)
     return Response(serializer.data)
 
+def test_view(request):
+    return JsonResponse({'mensagem': 'Backend acessível com CORS OK'})
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+

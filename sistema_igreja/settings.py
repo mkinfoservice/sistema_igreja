@@ -51,7 +51,11 @@ MIDDLEWARE = [
     
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # ou use CORS_ALLOWED_ORIGINS com localhost:3000
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Frontend local
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'sistema_igreja.urls'
 
@@ -87,3 +91,4 @@ USE_I18N = True
 USE_TZ = True
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CORS_ALLOW_ALL_ORIGINS = True
