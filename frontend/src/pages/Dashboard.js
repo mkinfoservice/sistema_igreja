@@ -3,12 +3,17 @@ import axios from 'axios';
 import { Pie, Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 
-function Dashboard() {
+function Dashboard({ onLogout }) {
   const [data, setData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem('access');
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        onLogout();
+        return;
+      }
+
       try {
         const response = await axios.get('http://localhost:8000/api/dashboard/', {
           headers: { Authorization: `Bearer ${token}` }
@@ -16,10 +21,11 @@ function Dashboard() {
         setData(response.data);
       } catch (err) {
         console.error('Erro ao buscar dados da dashboard:', err);
+        onLogout(); // logout automático se falhar o token
       }
     };
     fetchData();
-  }, []);
+  }, [onLogout]);
 
   if (!data) return <p>Carregando...</p>;
 
@@ -43,7 +49,12 @@ function Dashboard() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>Dashboard</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2>Dashboard</h2>
+        <button onClick={onLogout} style={{ padding: 8, background: '#d33', color: '#fff', border: 'none', borderRadius: 4 }}>
+          Sair
+        </button>
+      </div>
       <div style={{ display: 'flex', gap: 20, marginBottom: 30 }}>
         <div><strong>Total:</strong> {data.total}</div>
         <div><strong>Ativos:</strong> {data.ativos}</div>
