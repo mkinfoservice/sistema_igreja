@@ -1,129 +1,122 @@
-# 📍 ROADMAP - Sistema Igreja
+# 🗺️ ROADMAP - Sistema Igreja
 
-Este roadmap detalha as tarefas necessárias para o desenvolvimento completo do sistema de gestão de igreja 100% em nuvem. O projeto é dividido em módulos e etapas com prioridade, status, estimativa de tempo e responsáveis.
+Este documento detalha o plano de desenvolvimento do Sistema Igreja, uma plataforma de gestão para igrejas 100% em nuvem.
 
-## 📊 Visão Geral do Progresso
-- **Início do Projeto**: 01/05/2025
-- **Progresso Atual**: 25% concluído
-- **Próxima Milestone**: MVP com Login e Cadastro de Membros (Previsão: 15/06/2025)
-- **Lançamento v1.0**: Previsão para 01/09/2025
+## 📅 Cronograma de Desenvolvimento
 
----
+### Fase 1: Fundação e Estrutura Básica ✅
+- [x] Configuração inicial do projeto Django
+- [x] Configuração do React com TailwindCSS
+- [x] Integração entre backend e frontend
+- [x] Implementação do modelo de usuário personalizado (`Usuario`)
+- [x] Configuração de autenticação básica
+- [x] Implementação da rota de teste da API
+- [x] Correção do modelo de usuário personalizado (campos e referências)
+- [x] Adição dos campos 'genero' e 'idade' ao modelo Usuario
+- [x] Implementação da view `dashboard_view` com métricas de usuários
+- [x] Criação da rota `/api/dashboard/`
+- [x] Desenvolvimento de script para geração de usuários fake para testes
 
-## 🧱 Estrutura Inicial
+### Fase 2: Desenvolvimento dos Módulos Principais 🚧
+- [ ] **Módulo de Cadastro de Membros** (Em Andamento)
+  - [x] Modelo base de usuários/membros
+  - [x] API para listagem e métricas básicas de usuários
+  - [ ] Funcionalidades de busca e filtro avançados
+  - [ ] Importação e exportação de dados (CSV/Excel)
+  - [ ] Categorização de membros (Visitante, Membro, Líder, etc.)
+  - [ ] Histórico de atividades por membro
 
-| Tarefa                                   | Prioridade | Status     | Estimativa | Responsável | Dependências |
-|------------------------------------------|------------|------------|------------|-------------|--------------|
-| Criar repositório Git e README.md        | Alta       | ✅ Concluído | 1 dia      | Maykon      | Nenhuma      |
-| Criar backend Django com DRF             | Alta       | ✅ Concluído | 3 dias     | Maykon      | Repositório  |
-| Configurar autenticação personalizada    | Alta       | ✅ Concluído | 2 dias     | Maykon      | Backend      |
-| Criar frontend React com Tailwind 3.4.7  | Alta       | ✅ Concluído | 3 dias     | Maykon      | Repositório  |
-| Integrar frontend e backend              | Alta       | ✅ Concluído | 2 dias     | Maykon      | Backend, Frontend |
-| Configurar CORS e rota de teste api/test/ | Alta      | ✅ Concluído | 1 dia      | Maykon      | Backend, Frontend |
+- [ ] **Módulo de Dashboard e Relatórios** (Em Andamento)
+  - [x] Dashboard com métricas básicas de usuários
+  - [x] Visualização de distribuição por gênero
+  - [x] Visualização de distribuição por faixa etária
+  - [ ] Relatórios de crescimento (semanal, mensal, anual)
+  - [ ] Exportação de relatórios em PDF
+  - [ ] Dashboard financeiro
 
-**Milestone 1**: ✅ Estrutura Base Concluída (10/05/2025)
+- [ ] **Módulo Financeiro**
+  - [ ] Cadastro de receitas e despesas
+  - [ ] Categorias financeiras personalizáveis
+  - [ ] Gestão de dízimos e ofertas
+  - [ ] Relatórios financeiros
+  - [ ] Controle de contas a pagar e receber
+  - [ ] Integração com sistemas de pagamento online (opcional)
 
----
+- [ ] **Módulo de Certificados**
+  - [ ] Templates de certificados personalizáveis
+  - [ ] Geração automática de certificados (batismo, casamento, cursos)
+  - [ ] Emissão em PDF com assinatura digital
+  - [ ] Registro histórico de certificados emitidos
 
-## 🔐 Autenticação & Usuários
+- [ ] **Módulo de Sala Virtual**
+  - [ ] Integração com serviço de streaming
+  - [ ] Agendamento de transmissões
+  - [ ] Chat durante transmissões
+  - [ ] Biblioteca de transmissões anteriores
 
-| Tarefa                                        | Prioridade | Status     | Estimativa | Responsável | Dependências |
-|-----------------------------------------------|------------|------------|------------|-------------|--------------|
-| Cadastro de usuários                          | Alta       | ✅ Concluído | 2 dias     | Maykon      | Autenticação personalizada |
-| Login com JWT ou Token                        | Alta       | 🟡 Em andamento | 3 dias  | Maykon      | Cadastro de usuários |
-| Proteção de rotas no frontend                 | Alta       | 🔲 Pendente | 2 dias     | Maykon      | Login com JWT |
-| Painel de usuário (página protegida)          | Alta       | 🔲 Pendente | 3 dias     | Maykon      | Proteção de rotas |
-| Testes de integração do sistema de autenticação | Média    | 🔲 Pendente | 2 dias     | Maykon      | Login completo |
+### Fase 3: Aprimoramento da Interface 🔮
+- [ ] Desenvolvimento da interface completa do frontend
+- [ ] Design mobile-first e responsivo
+- [ ] Implementação de temas personalizáveis
+- [ ] Melhorias de acessibilidade
+- [ ] Otimização para dispositivos móveis
 
-**Milestone 2**: 🟡 Sistema de Login (Previsão: 25/05/2025)
+### Fase 4: Estabilização e Implantação 🔮
+- [ ] Testes unitários e de integração
+- [ ] Correção de bugs e otimizações
+- [ ] Migração para PostgreSQL
+- [ ] Deploy para ambiente de produção (Railway/Vercel)
+- [ ] Documentação completa para usuários
 
----
+### Fase 5: Expansão e Recursos Avançados 🔮
+- [ ] Sistema de backup automático
+- [ ] Sistema de notificações (email/push)
+- [ ] Aplicativo móvel (React Native) 
+- [ ] Integração com serviços de email marketing
+- [ ] Módulo de eventos e inscrições
+- [ ] Módulo de gestão de células/grupos pequenos
 
-## 👥 Módulo: Membros
+## 📊 Métricas de Progresso
+- **Fase 1:** 100% concluída
+- **Fase 2:** 15% concluída
+- **Fase 3:** 5% concluída
+- **Fase 4:** 0% concluída
+- **Fase 5:** 0% concluída
+- **Progresso Total:** Aproximadamente 25% concluído
 
-| Tarefa                                      | Prioridade | Status     | Estimativa | Responsável | Dependências |
-|---------------------------------------------|------------|------------|------------|-------------|--------------|
-| CRUD de membros                             | Alta       | 🔲 Pendente | 5 dias     | Maykon      | Sistema de Login |
-| Filtro por cargos, idade, cidade etc.       | Média      | 🔲 Pendente | 3 dias     | Maykon      | CRUD de membros |
-| Upload de foto e documentos                 | Média      | 🔲 Pendente | 4 dias     | Maykon      | CRUD de membros |
-| Testes unitários para o módulo de membros   | Média      | 🔲 Pendente | 2 dias     | Maykon      | CRUD completo |
+## 🔄 Iterações Recentes
 
-**Milestone 3**: 🔲 Cadastro de Membros Completo (Previsão: 15/06/2025)
+### Última Iteração (13/05/2025)
+- Corrigida referência ao modelo de usuário personalizado (Usuario)
+- Corrigido erro de campo inexistente 'genero' para métricas no dashboard
+- Corrigidas chamadas incorretas de métodos `.count()` e `.filter()`
+- Implementada view 'dashboard_view' com métricas de usuários
+- Adicionada rota `/api/dashboard/` em urls.py
+- Ajustado serializer e estrutura de models com campos 'genero' e 'idade'
+- Criado script para geração de usuários fake com dados completos
 
----
+### Próxima Iteração (Planejada)
+- Melhorar visualizações do dashboard no frontend
+- Conectar frontend com endpoint de dashboard
+- Iniciar desenvolvimento do módulo financeiro
+- Expandir funcionalidades do cadastro de membros
 
-## 🧾 Módulo: Certificados
+## 🚀 Prioridades Atuais
+1. **ALTA:** Completar integração do dashboard entre frontend e backend
+2. **ALTA:** Finalizar módulo de cadastro de membros com todas funcionalidades
+3. **MÉDIA:** Iniciar desenvolvimento do módulo financeiro
+4. **MÉDIA:** Melhorar UX/UI do frontend
+5. **BAIXA:** Preparar ambiente de produção para primeiro deploy
 
-| Tarefa                                          | Prioridade | Status     |
-|-------------------------------------------------|------------|------------|
-| Geração automática de certificados em PDF       | Alta       | 🔲 Pendente |
-| Download e envio por e-mail                     | Média      | 🔲 Pendente |
-| Histórico de certificados emitidos              | Média      | 🔲 Pendente |
-
----
-
-## 💸 Módulo: Finanças
-
-| Tarefa                              | Prioridade | Status     |
-|-------------------------------------|------------|------------|
-| Controle de entradas e saídas       | Alta       | 🔲 Pendente |
-| Relatórios mensais                  | Alta       | 🔲 Pendente |
-| Exportação para Excel               | Média      | 🔲 Pendente |
-| Gráficos com Chart.js               | Média      | 🔲 Pendente |
-
----
-
-## 🎥 Módulo: Sala Virtual
-
-| Tarefa                                         | Prioridade | Status     |
-|------------------------------------------------|------------|------------|
-| Integração com YouTube Live / RTMP             | Média      | 🔲 Pendente |
-| Chat ao vivo                                   | Baixa      | 🔲 Pendente |
-| Agenda de transmissões                         | Média      | 🔲 Pendente |
-
----
-
-## 🌐 Infraestrutura & Deploy
-
-| Tarefa                                          | Prioridade | Status     |
-|-------------------------------------------------|------------|------------|
-| Deploy backend na Railway                       | Alta       | 🔲 Pendente |
-| Deploy frontend na Vercel                       | Alta       | 🔲 Pendente |
-| Configurar variáveis de ambiente (.env)         | Alta       | 🔲 Pendente |
-| Configurar domínio e HTTPS                      | Média      | 🔲 Pendente |
-
----
-
-## 📱 UI/UX & Responsividade
-
-| Tarefa                                    | Prioridade | Status     |
-|-------------------------------------------|------------|------------|
-| Design responsivo com Tailwind            | Alta       | 🟡 Em andamento |
-| Tema escuro opcional                      | Média      | 🔲 Pendente |
-| PWA (opcional)                            | Baixa      | 🔲 Pendente |
-
----
-
-## ✅ Progresso Geral e Milestones
-
-| Etapa                     | Status     | Data Prevista | % Concluído |
-|---------------------------|------------|---------------|-------------|
-| Planejamento              | ✅ Concluído | 05/05/2025    | 100%        |
-| Backend Inicial           | ✅ Concluído | 10/05/2025    | 100%        |
-| Frontend Base             | ✅ Concluído | 10/05/2025    | 100%        |
-| Integração Inicial        | ✅ Concluído | 12/05/2025    | 100%        |
-| Sistema de Autenticação   | 🟡 Em andamento | 25/05/2025 | 60%         |
-| Módulo de Membros         | 🔲 Pendente | 15/06/2025    | 0%          |
-| Módulo de Certificados    | 🔲 Pendente | 01/07/2025    | 0%          |
-| Módulo de Finanças        | 🔲 Pendente | 15/07/2025    | 0%          |
-| Módulo de Sala Virtual    | 🔲 Pendente | 01/08/2025    | 0%          |
-| Testes e Refinamentos     | 🔲 Pendente | 15/08/2025    | 0%          |
-| Deploy Produção           | 🔲 Pendente | 01/09/2025    | 0%          |
+## 🛠️ Pontos Técnicos a Resolver
+- Otimizar queries do dashboard para melhor performance
+- Implementar cache para dados frequentemente acessados
+- Padronizar formato de resposta da API
+- Implementar sistema de logs mais robusto
+- Configurar sistema de backup automatizado
 
 ---
 
-## 🧠 Considerações Finais
+*Este roadmap é um documento vivo e será atualizado conforme o desenvolvimento avança.*
 
-Este roadmap pode ser atualizado conforme o projeto evolui. Marque tarefas conforme forem sendo concluídas e use-o como guia para organizar a equipe, prazos e prioridades.
-
----
+Última atualização: 13/05/2025

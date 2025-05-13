@@ -10,7 +10,7 @@ Este projeto é uma solução completa para o gerenciamento de igrejas, com mód
 ### Backend:
 - **Django** - Framework Python para desenvolvimento web rápido e seguro
 - **Django Rest Framework** - Toolkit poderoso para construção de APIs RESTful
-- **Autenticação personalizada com `usuarios.User`** - Modelo personalizado para maior flexibilidade
+- **Autenticação personalizada com `usuarios.Usuario`** - Modelo personalizado para maior flexibilidade
 - **CORS configurado para integração** - Permite comunicação segura entre frontend e backend
 - **SQLite (desenvolvimento) / PostgreSQL (produção)** - Banco de dados escalável
 - **Deploy: Railway (previsto)** - Plataforma moderna para deploy simplificado
@@ -29,7 +29,7 @@ Este projeto é uma solução completa para o gerenciamento de igrejas, com mód
 ## 📌 Status Atual do Projeto
 ### ✅ Concluído até agora:
 - Estrutura base Django + React integrada
-- Modelo de usuário personalizado configurado (`usuarios.User`)
+- Modelo de usuário personalizado configurado (`usuarios.Usuario`)
 - App `usuarios` e autenticação funcional
 - Projeto React criado e funcionando com TailwindCSS 3.4.7
 - Frontend já com layout inicial e dashboard básico em andamento
@@ -37,19 +37,28 @@ Este projeto é uma solução completa para o gerenciamento de igrejas, com mód
 - **Backend acessível, CORS configurado corretamente**
 - **Rota api/test/ funcionando como esperado**
 - **Conexão entre frontend (React) e backend (Django) estabelecida**
+- **Dashboard implementado com visualização de métricas de usuários:**
+  - Total de usuários cadastrados
+  - Usuários ativos e inativos
+  - Distribuição por gênero
+  - Distribuição por faixa etária
+- **API de dashboard funcionando em `/api/dashboard/`**
+- **Modelo de usuário atualizado com campos 'genero' e 'idade'**
+- **Script de geração de dados fake para testes do dashboard**
 ---
 ## 🚧 Etapas Pendentes
 ### Backend:
-- [ ] Criar os módulos:
-  - [ ] Cadastro de Membros
+- [ ] Continuar desenvolvimento dos módulos:
+  - [ ] Cadastro de Membros (parcialmente implementado com métricas básicas)
   - [ ] Emissão de Certificados
-  - [ ] Relatórios e Gráficos
+  - [ ] Relatórios e Gráficos (parcialmente implementado no dashboard)
   - [ ] Gestão Financeira
   - [ ] Sala Virtual (com integração de live)
 - [ ] Implementar testes automatizados
 - [ ] Configurar banco PostgreSQL para produção
 ### Frontend:
 - [ ] Interface de login e cadastro conectada ao backend
+- [ ] Consumo completo da API do dashboard
 - [ ] Páginas para cada módulo
 - [ ] Consumo da API Django com Axios
 - [ ] Interface mobile-first responsiva
@@ -86,6 +95,9 @@ cp .env.example .env  # Copiar arquivo de exemplo e ajustar conforme necessário
 python manage.py makemigrations
 python manage.py migrate
 
+# Executar script para criar usuários fake (opcional, para visualizar métricas do dashboard)
+python manage.py shell < scripts/generate_fake_users.py
+
 # Iniciar servidor de desenvolvimento
 python manage.py runserver
 ```
@@ -105,6 +117,7 @@ npm start
 ### Verificando a Instalação
 - Backend estará disponível em: http://localhost:8000/
 - API será acessível em: http://localhost:8000/api/
+- API do Dashboard: http://localhost:8000/api/dashboard/
 - Frontend estará disponível em: http://localhost:3000/
 - Rota de teste: http://localhost:8000/api/test/
 ## 📁 Estrutura do Projeto
@@ -114,6 +127,12 @@ sistema_igreja/
 │   ├── manage.py            # Script de gerenciamento Django
 │   ├── sistema/             # Configurações principais
 │   ├── usuarios/            # App de autenticação personalizada
+│   │   ├── models.py        # Modelo Usuario com campos genero e idade
+│   │   ├── serializers.py   # Serializers para API
+│   │   ├── urls.py          # URLs da API, incluindo /api/dashboard/
+│   │   └── views.py         # Views incluindo dashboard_view
+│   ├── scripts/             # Scripts utilitários
+│   │   └── generate_fake_users.py # Script para gerar usuários fake
 │   ├── requirements.txt     # Dependências Python
 │   └── .env.example         # Exemplo de variáveis de ambiente
 ├── frontend/                # Aplicação React
