@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function Login({ onLoginSuccess }) {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState(null);
 
@@ -12,7 +12,7 @@ function Login({ onLoginSuccess }) {
 
     try {
       const response = await axios.post('http://localhost:8000/api/token/', {
-        email,
+        username,
         password: senha
       });
 
@@ -32,12 +32,12 @@ function Login({ onLoginSuccess }) {
         <h2 className="text-xl font-bold mb-4 text-center">Login</h2>
         {erro && <p className="text-red-500 mb-4 text-center">{erro}</p>}
         <div className="mb-4">
-          <label className="block mb-1">E-mail</label>
+          <label className="block mb-1">Usuário</label>
           <input
-            type="email"
+            type="text"
             className="w-full p-2 border border-gray-300 rounded"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
             autoFocus
           />

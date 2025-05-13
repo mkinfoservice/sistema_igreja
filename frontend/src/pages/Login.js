@@ -1,49 +1,61 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-function Login({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+function Login({ onLoginSuccess }) {
+  const [username, setUsername] = useState('');
+  const [senha, setSenha] = useState('');
+  const [erro, setErro] = useState(null);
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErro(null);
 
     try {
       const response = await axios.post('http://localhost:8000/api/token/', {
-        email,
-        password,
+        username,
+        password: senha
       });
 
-      localStorage.setItem('access', response.data.access);
-      localStorage.setItem('refresh', response.data.refresh);
-
-      onLogin(); // Redirecionar para o painel
-
-    } catch (error) {
-      alert('Login inválido');
+      onLoginSuccess(response.data.access, response.data.refresh);
+    } catch (err) {
+      console.error(err);
+      setErro('Credenciais inválidas');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form className="bg-white p-6 rounded shadow-md" onSubmit={handleLogin}>
-        <h2 className="text-xl mb-4 font-bold">Login</h2>
-        <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-2 p-2 border rounded"
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <button className="w-full bg-blue-600 text-white p-2 rounded" type="submit">
+    <div className="flex items-center justify-center h-screen bg-gray-200">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded shadow-md w-full max-w-sm"
+      >
+        <h2 className="text-xl font-bold mb-4 text-center">Login</h2>
+        {erro && <p className="text-red-500 mb-4 text-center">{erro}</p>}
+        <div className="mb-4">
+          <label className="block mb-1">Usuário</label>
+          <input
+            type="text"
+            className="w-full p-2 border border-gray-300 rounded"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            autoFocus
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-1">Senha</label>
+          <input
+            type="password"
+            className="w-full p-2 border border-gray-300 rounded"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
+        >
           Entrar
         </button>
       </form>
