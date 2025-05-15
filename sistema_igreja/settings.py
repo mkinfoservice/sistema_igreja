@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'usuarios.apps.UsuariosConfig',
     'corsheaders',
     
+    
 ]
 
 AUTH_USER_MODEL = 'usuarios.Usuario'

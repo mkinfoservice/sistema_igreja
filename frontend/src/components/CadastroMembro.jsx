@@ -28,16 +28,28 @@ function CadastroMembro() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // corrige data_batismo se vier vazia
+    const payload = {
+      ...formData,
+      data_batismo: formData.data_batismo === '' ? null : formData.data_batismo,
+    };
+
     try {
-      await axios.post('http://localhost:8000/api/membros/', formData);
+      await axios.post('http://localhost:8000/api/membros/', payload);
       alert('Membro cadastrado com sucesso!');
       setFormData({
         nome_completo: '', cpf: '', rg: '', data_nascimento: '', endereco: '', telefone: '',
         email: '', batizado: false, data_batismo: '', ministerio: '', ativo: true, genero: 'N', idade: ''
       });
     } catch (error) {
-      console.error('Erro ao cadastrar membro:', error);
-      alert('Erro ao cadastrar membro.');
+      if (error.response) {
+        console.error('Erro ao cadastrar membro:', error.response.data);
+        alert('Erro ao cadastrar membro: ' + JSON.stringify(error.response.data));
+      } else {
+        console.error('Erro ao cadastrar membro:', error.message);
+        alert('Erro desconhecido ao cadastrar membro: ');
+      }
     }
   };
 

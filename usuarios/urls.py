@@ -20,6 +20,5 @@ urlpatterns = [
     path('test/', test_view, name='test'),
     path('dashboard/', dashboard_view, name='dashboard'),
     
-    # Incluindo as URLs do router para membros
-    path('membros/', include(router.urls)),
+   
 ]
