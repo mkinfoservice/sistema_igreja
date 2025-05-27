@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Input } from "@components/ui/input";
-import { Button } from "@components/ui/button";
-import { Label } from "@components/ui/label";
-import { Card } from "@components/ui/card";
+import { Input } from '../../components/ui/Input';
+import { Button } from '../../components/ui/Button';
+import { Label } from '../../components/ui/Label';
+import { Card } from '../../components/ui/Card';
 
 const EditarMembro = () => {
     const { id } = useParams();
@@ -39,7 +39,6 @@ const EditarMembro = () => {
             .catch(err => console.error("Erro ao atualizar membro:", err))
             .finally(() => setIsLoading(false));
     };
-
     if (isFetching) {
         return (
             <div className="p-4 max-w-xl mx-auto flex justify-center">

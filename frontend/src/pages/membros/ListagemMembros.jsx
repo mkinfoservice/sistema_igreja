@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button } from "@components/ui/button";
-import { Input } from "@components/ui/input";
-import { Card } from "@components/ui/card";
+import { Input } from '../../components/ui/Input';
+import { Button } from '../../components/ui/Button';
+import { Label } from '../../components/ui/Label';
+import { Card } from '../../components/ui/Card';
 
 const ListagemMembros = () => {
     const [membros, setMembros] = useState([]);
@@ -20,15 +21,15 @@ const ListagemMembros = () => {
     }, []); // ← Agora está correto: fecha a arrow function E o `useEffect`
 
     const membrosFiltrados = membros.filter((membro) =>
-        membro.nome.toLowerCase().includes(busca.toLowerCase()) ||
-        membro.funcao.toLowerCase().includes(busca.toLowerCase())
-    );
+  membro.nome?.toLowerCase().includes(busca.toLowerCase()) ||
+  membro.funcao?.toLowerCase().includes(busca.toLowerCase())
+);
 
     return (
         <div className="p-4 space-y-4">
         <div className="flex justify-between items-center">
             <h2 className="text-2x1 font-bold">Membros Cadastrados</h2>
-        <button onClick={() => window.location.href = "/membros/cadastro"}>+ Novo Membro
+        <button onClick={() => window.location.href = "/membros/cadastrar"}>+ Novo Membro
         </button>
         </div>
 
