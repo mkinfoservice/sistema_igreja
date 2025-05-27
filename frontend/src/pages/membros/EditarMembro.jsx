@@ -18,14 +18,37 @@ const EditarMembro = () => {
     });
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
+    const [error, setError] = useState(null);
 
+    // Configuração do Axios para incluir o token em todas as requisições
+axios.interceptors.request.use(config => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    } return config;
+});
     useEffect(() => {
-        setIsFetching(true);
-        axios.get(`http://localhost:8000/api/membros/${id}/`)
-            .then(res => setMembro(res.data))
-            .catch(err => console.error("Erro ao buscar membro:", err))
-            .finally(() => setIsFetching(false));
-    }, [id]);
+        const fetchMembro = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/membros/${id}/`);
+                //Formata a data para o input type = "date" (YYYY-MM-DD)
+                if (response.data.data_batismo) {
+                    response.data.data_batismo = new Date(response.data.data_batismo).toISOString().split("T")[0];
+                }
+                setMembro(response.data);
+                setError(null);
+            } catch (err) {
+                console.error("Erro ao buscar membro:", err);
+                setError("Erro ao buscar membro. Por favor, tente novamente mais tarde.");
+                if (err.response?.status === 401){
+                    navigate("/login");
+                }
+            } finally {
+                setIsFetching(false);
+            }
+        }
+        fetchMembro();
+    }, [id, navigate]);
 
     const handleChange = (e) => {
         setMembro({...membro, [e.target.name]: e.target.value });
@@ -34,7 +57,7 @@ const EditarMembro = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        axios.put(`http://localhost:8000/api/membros/${id}/`, membro)
+         axios.put(`http://localhost:8000/api/membros/${id}/`, membro)
             .then(() => navigate("/membros"))
             .catch(err => console.error("Erro ao atualizar membro:", err))
             .finally(() => setIsLoading(false));

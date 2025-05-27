@@ -37,7 +37,7 @@ const MembrosPage = () => {
     };
   
     fetchMembros();
-  }, []); // Corrigido: useEffect agora fecha corretamente
+  }, []);    // Corrigido: useEffect agora fecha corretamente
 
   if (loading) {
     return <p>Carregando membros...</p>;
@@ -53,7 +53,7 @@ const MembrosPage = () => {
                 {membros.map((membro) => (
 
                     <li key={membro.id} className="p-4 border rounded shadow">
-                        <p><strong>Nome:</strong> {membro.nome}</p>
+                        <p><strong>Nome:</strong> {membro.nome_completo}</p>
                         <p><strong>Email:</strong> {membro.email}</p>
                         <p><strong>Telefone:</strong> {membro.telefone}</p>
                         <p><strong>Data de Nascimento:</strong> {membro.data_nascimento}</p>

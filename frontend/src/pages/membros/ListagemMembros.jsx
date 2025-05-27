@@ -11,13 +11,27 @@ const ListagemMembros = () => {
 
     // CORRIGIDO
     useEffect(() => {
-        axios.get("http://localhost:8000/api/membros/")
-            .then((response) => {
-                setMembros(response.data);
-            })
-            .catch((error) => {
-                console.error("Erro ao buscar membros:", error);
+       const fetchMembros = async () => {
+        const token = localStorage.getItem("acess_token");
+
+        try {
+            const response = await fetch("http://localhost:8000/api/membros/${id}/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
             });
+        if (!response.ok) {
+            throw new Error("Erro ao buscar membros");
+        }
+        const data = await response.json();
+        setMembros(data);
+        } catch (error) {
+            console.error("Erro ao buscar membros:", error.message);
+        }
+    };
+    fetchMembros();
     }, []); // ← Agora está correto: fecha a arrow function E o `useEffect`
 
     const membrosFiltrados = membros.filter((membro) =>
