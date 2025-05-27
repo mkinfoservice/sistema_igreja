@@ -8,34 +8,35 @@ const MembrosPage = () => {
 
   useEffect(() => {
     const fetchMembros = async () => {
-    const token = localStorage.getItem("acesso_token");
-    console.log("Token usado:", token);
-    try {
+      const token = localStorage.getItem("access_token");
+      console.log("Token usado:", token);
+  
+      try {
         const response = await fetch("http://localhost:8000/api/membros/", {
-        method: "GET",
-        headers: {
+          method: "GET",
+          headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${acesso_token}`, // Corrigido: Use `acesso_token` aqui
-        },
+            Authorization: `Bearer ${token}`,
+          },
         });
-    if (!responde.ok){
-        const errorData = await response.json();
-        console.error("Erro ao buscar membros:", errorData);
-        throw new Error("Erro ao buscar membros");
-    }
-
-    const data = await response.json();
-    console.log("Dados recebidos:", data);
-    setMembros(data);
-} catch (error) {
-    console.error("Erro ao buscar membros:", error);
-} finally {
-    setLoading(false);
-}
-};
-
-fetchMembros();
-
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Erro da API:", errorData);
+          throw new Error("Erro ao buscar membros");
+        }
+  
+        const data = await response.json();
+        console.log("Dados recebidos:", data);
+        setMembros(data);
+      } catch (error) {
+        console.error("Erro ao buscar membros:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchMembros();
   }, []); // Corrigido: useEffect agora fecha corretamente
 
   if (loading) {
