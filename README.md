@@ -165,6 +165,41 @@ sistema_igreja/
 - Use branches para novas features se necessário
 - Evite trabalhar simultaneamente nos mesmos arquivos em ambos dispositivos
 
+## 🔄 Iterações Recentes
+
+### Última Iteração (24/05/2025)
+- Finalizada integração de autenticação condicional via BrowserRouter
+- Criadas rotas autenticadas para dashboard, membros e edição
+- Corrigido bug de renderização condicional baseado em autenticação
+- Refatorado App.jsx para separação de rotas
+- Implementado componente de edição com conexão ao backend
+
+### Iteração Anterior (19/05/2025)
+- Corrigido campo `data_batismo` com formato incorreto na API
+- Integração do formulário de cadastro com backend (formato de datas ajustado)
+- Testes de cadastro de membros concluídos com sucesso
+- Commit completo com atualizações do backend e frontend
+- Gerado README e ROADMAP atualizados
+
+### Próxima Iteração (Planejada)
+- Melhorar visualizações do dashboard no frontend
+- Conectar frontend com endpoint de dashboard
+- Expandir funcionalidades do módulo financeiro
+- Adicionar filtros e ordenações no frontend do cadastro de membros
+
+## 🚀 Prioridades Atuais
+- **ALTA:** Finalizar módulo de membros com filtros e edição completa
+- **ALTA:** Melhorar interface e responsividade geral do frontend
+- **MÉDIA:** Iniciar módulo financeiro
+- **BAIXA:** Iniciar preparação para deploy
+
+## 🛠️ Pontos Técnicos a Resolver
+- Otimizar queries da view de dashboard
+- Implementar cache para dados estáticos
+- Padronizar formatos de resposta da API
+- Criar middleware para autenticação JWT (planejado)
+- Definir estrutura de logs e mensagens de erro
+
 ### Padrões de Código
 - Python: PEP 8
 - JavaScript: ESLint com configuração padrão do React
@@ -177,7 +212,7 @@ Este projeto está licenciado sob a MIT License - veja o arquivo LICENSE.md para
 
 Se você encontrar problemas ou tiver dúvidas sobre o projeto:
 - Abra uma issue no GitHub
-- Entre em contato com o desenvolvedor principal: maykon@exemplo.com
+- Entre em contato com o desenvolvedor principal: [Maykon Douglas](mailto:mkinfoservice@gmail.com)
 - Consulte a documentação na Wiki do projeto (em desenvolvimento)
 
 ---

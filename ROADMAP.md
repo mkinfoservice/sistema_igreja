@@ -78,16 +78,23 @@ Este documento detalha o plano de desenvolvimento do **Sistema Igreja**, uma pla
 
 ## 📊 Métricas de Progresso
 - Fase 1: ✅ 100% concluída
-- Fase 2: 🔄 30% concluída
+- Fase 2: 🔄 35% concluída
 - Fase 3: 🔄 10% concluída
 - Fase 4: ⏳ 0% concluída
 - Fase 5: ⏳ 0% concluída
 
-**Progresso Total: Aproximadamente 30% concluído**
+**Progresso Total: Aproximadamente 35% concluído**
 
 ## 🔄 Iterações Recentes
 
-### Última Iteração (19/05/2025)
+### Última Iteração (24/05/2025)
+- Finalizada integração de autenticação condicional via BrowserRouter
+- Criadas rotas autenticadas para dashboard, membros e edição
+- Corrigido bug de renderização condicional baseado em autenticação
+- Refatorado App.jsx para separação de rotas
+- Implementado componente de edição com conexão ao backend
+
+### Iteração Anterior (19/05/2025)
 - Corrigido campo `data_batismo` com formato incorreto na API
 - Integração do formulário de cadastro com backend (formato de datas ajustado)
 - Testes de cadastro de membros concluídos com sucesso
@@ -101,15 +108,14 @@ Este documento detalha o plano de desenvolvimento do **Sistema Igreja**, uma pla
 - Adicionar filtros e ordenações no frontend do cadastro de membros
 
 ## 🚀 Prioridades Atuais
-- **ALTA:** Completar integração do dashboard entre frontend e backend
-- **ALTA:** Finalizar módulo de cadastro de membros com todas funcionalidades
-- **MÉDIA:** Melhorar UX/UI do frontend
-- **MÉDIA:** Expandir funcionalidades financeiras
-- **BAIXA:** Preparar ambiente de produção para primeiro deploy
+- **ALTA:** Finalizar módulo de membros com filtros e edição completa
+- **ALTA:** Melhorar interface e responsividade geral do frontend
+- **MÉDIA:** Iniciar módulo financeiro
+- **BAIXA:** Iniciar preparação para deploy
 
 ## 🛠️ Pontos Técnicos a Resolver
-- Otimizar queries do dashboard para melhor performance
-- Implementar cache para dados frequentemente acessados
-- Padronizar formato de resposta da API
-- Implementar sistema de logs mais robusto
-- Configurar sistema de backup automatizado
+- Otimizar queries da view de dashboard
+- Implementar cache para dados estáticos
+- Padronizar formatos de resposta da API
+- Criar middleware para autenticação JWT (planejado)
+- Definir estrutura de logs e mensagens de erro
