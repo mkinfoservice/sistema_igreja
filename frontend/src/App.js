@@ -3,6 +3,9 @@ import axios from 'axios';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CadastroMembro from './components/CadastroMembro';
+import ListagemMembros from './pages/membros/ListagemMembros';
+import EditarMembro from './pages/membros/EditarMembro';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -72,5 +75,6 @@ function App() {
     </div>
   );
 } // ← Faltava este fechamento!
+
 
 export default App;
