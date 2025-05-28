@@ -12,7 +12,7 @@ const MembrosPage = () => {
       console.log("Token usado:", token);
   
       try {
-        const response = await fetch("http://localhost:8000/api/membros/", {
+        const response = await fetch(`http://localhost:8000/api/membros/`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
