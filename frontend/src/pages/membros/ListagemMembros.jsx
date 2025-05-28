@@ -15,7 +15,7 @@ const ListagemMembros = () => {
         const token = localStorage.getItem("acess_token");
 
         try {
-            const response = await fetch("http://localhost:8000/api/membros/${id}/", {
+            const response = await fetch(`http://localhost:8000/api/membros/${id}/`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
