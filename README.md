@@ -1,220 +1,91 @@
-# Sistema Igreja - Plataforma de Gestão 100% em Nuvem
-Este projeto é uma solução completa para o gerenciamento de igrejas, com módulos essenciais como cadastro de membros, emissão de certificados, controle financeiro, sala virtual e mais. Ele utiliza tecnologias modernas para garantir desempenho, segurança e facilidade de uso.
 
-## 🎯 Objetivos do Projeto
-- Facilitar a gestão administrativa de igrejas de qualquer tamanho
-- Centralizar informações de membros, finanças e eventos em uma única plataforma
-- Oferecer uma experiência segura e intuitiva para usuários com diferentes níveis técnicos
-- Possibilitar acesso remoto a informações e funções administrativas por meio de nuvem
-## ✅ Tecnologias Utilizadas
-### Backend:
-- **Django** - Framework Python para desenvolvimento web rápido e seguro
-- **Django Rest Framework** - Toolkit poderoso para construção de APIs RESTful
-- **Autenticação personalizada com `usuarios.Usuario`** - Modelo personalizado para maior flexibilidade
-- **CORS configurado para integração** - Permite comunicação segura entre frontend e backend
-- **SQLite (desenvolvimento) / PostgreSQL (produção)** - Banco de dados escalável
-- **Deploy: Railway (previsto)** - Plataforma moderna para deploy simplificado
+# Sistema Igreja
 
-### Frontend:
-- **React 18** - Biblioteca JavaScript para interfaces dinâmicas com React Hooks
-- **TailwindCSS 3.4.7** - Framework CSS utilitário para design responsivo
-- **React Router DOM 7.6** - Navegação declarativa para aplicações React
-- **Chart.js e React-Chartjs-2** - Visualização de dados com gráficos interativos
+Sistema de gestão completo para igrejas, 100% em nuvem, com funcionalidades para cadastro de membros, dashboard analítico, controle financeiro, certificados, transmissões ao vivo e muito mais.
 
-### Requisitos do Sistema:
-- **Node.js** v16.0+ e npm v8.0+
-- **Python** v3.9+
-- **pip** v22.0+
----
-## 📌 Status Atual do Projeto
-### ✅ Concluído até agora:
-- Estrutura base Django + React integrada
-- Modelo de usuário personalizado configurado (`usuarios.Usuario`)
-- App `usuarios` e autenticação funcional
-- Projeto React criado e funcionando com TailwindCSS 3.4.7
-- Frontend já com layout inicial e dashboard básico em andamento
-- Primeiros commits feitos e versionamento no Git iniciado
-- **Backend acessível, CORS configurado corretamente**
-- **Rota api/test/ funcionando como esperado**
-- **Conexão entre frontend (React) e backend (Django) estabelecida**
-- **Dashboard implementado com visualização de métricas de usuários:**
-  - Total de usuários cadastrados
-  - Usuários ativos e inativos
-  - Distribuição por gênero
-  - Distribuição por faixa etária
-- **API de dashboard funcionando em `/api/dashboard/`**
-- **Modelo de usuário atualizado com campos 'genero' e 'idade'**
-- **Script de geração de dados fake para testes do dashboard**
----
-## 🚧 Etapas Pendentes
-### Backend:
-- [ ] Continuar desenvolvimento dos módulos:
-  - [ ] Cadastro de Membros (parcialmente implementado com métricas básicas)
-  - [ ] Emissão de Certificados
-  - [ ] Relatórios e Gráficos (parcialmente implementado no dashboard)
-  - [ ] Gestão Financeira
-  - [ ] Sala Virtual (com integração de live)
-- [ ] Implementar testes automatizados
-- [ ] Configurar banco PostgreSQL para produção
-### Frontend:
-- [ ] Interface de login e cadastro conectada ao backend
-- [ ] Consumo completo da API do dashboard
-- [ ] Páginas para cada módulo
-- [ ] Consumo da API Django com Axios
-- [ ] Interface mobile-first responsiva
-### Infra:
-- [ ] Deploy do backend na Railway
-- [ ] Deploy do frontend na Vercel
-- [ ] Configuração do domínio e certificado SSL
----
-## 🚀 Como Executar Localmente
+## Tecnologias Utilizadas
+- **Backend:** Django, Django REST Framework
+- **Frontend:** React, TailwindCSS
+- **Banco de Dados:** SQLite (desenvolvimento), PostgreSQL (produção)
+- **Deploy:** Railway (backend), Vercel (frontend)
 
-### Pré-requisitos
-- Git instalado
-- Python 3.9+ e pip instalados
-- Node.js 16.0+ e npm instalados
+## Funcionalidades Atuais
+
+### ✅ Autenticação
+- Login de usuário via JWT
+- Modelo de usuário personalizado (`usuarios.Usuario`)
+- Autenticação persistente com refresh automático
+
+### ✅ Membros
+- Cadastro de membros com todos os campos relevantes
+- Listagem de membros com filtros
+- Edição de membros com formulário dinâmico
+- Integração com backend protegida por token JWT
+
+### ✅ Dashboard
+- Métricas de distribuição por gênero
+- Faixa etária dos usuários cadastrados
+- Dados analíticos para gestão geral
+
+### ✅ Frontend Navegação
+- Roteamento autenticado com `BrowserRouter` e `Routes`
+- Controle de navegação com `useEffect` e tokens locais
+- Componentes dinâmicos por rota:
+  - `/` → Dashboard
+  - `/membros` → Listagem de membros
+  - `/membros/cadastrar` → Cadastro de novo membro
+  - `/membros/editar/:id` → Edição de membro existente
+
+## Estrutura do Projeto
+```
+sistema_igreja/
+├── sistema_igreja/
+│   ├── usuarios/         # App de autenticação e modelo de usuários
+│   ├── membros/          # App de gestão de membros
+│   └── dashboard/        # App com views e dados analíticos
+├── frontend/
+│   ├── components/
+│   │   ├── CadastroMembro.jsx
+│   │   ├── ListagemMembros.jsx
+│   │   └── EditarMembro.jsx
+│   ├── pages/
+│   │   ├── Login.jsx
+│   │   └── Dashboard.jsx
+│   └── App.jsx
+```
+
+## Como rodar localmente
 
 ### Backend (Django)
 ```bash
-# Clonar o repositório (se ainda não tiver feito)
-git clone https://github.com/seu-usuario/sistema-igreja.git
-cd sistema-igreja/backend
-
-# Criar e ativar ambiente virtual
-python -m venv env
-source env/bin/activate  # Linux/Mac
-env\Scripts\activate  # Windows
-
-# Instalar dependências
+cd backend
+python -m venv venv
+venv\Scripts\activate
 pip install -r requirements.txt
-
-# Configurar variáveis de ambiente
-cp .env.example .env  # Copiar arquivo de exemplo e ajustar conforme necessário
-
-# Configurar banco de dados
-python manage.py makemigrations
 python manage.py migrate
-
-# Executar script para criar usuários fake (opcional, para visualizar métricas do dashboard)
-python manage.py shell < scripts/generate_fake_users.py
-
-# Iniciar servidor de desenvolvimento
 python manage.py runserver
 ```
 
 ### Frontend (React)
 ```bash
-# Navegar até diretório do frontend
-cd ../frontend
-
-# Instalar dependências
+cd frontend
 npm install
-
-# Iniciar servidor de desenvolvimento
-npm start
+npm run dev
 ```
 
-### Verificando a Instalação
-- Backend estará disponível em: http://localhost:8000/
-- API será acessível em: http://localhost:8000/api/
-- API do Dashboard: http://localhost:8000/api/dashboard/
-- Frontend estará disponível em: http://localhost:3000/
-- Rota de teste: http://localhost:8000/api/test/
-## 📁 Estrutura do Projeto
-```
-sistema_igreja/
-├── backend/                 # Projeto Django
-│   ├── manage.py            # Script de gerenciamento Django
-│   ├── sistema/             # Configurações principais
-│   ├── usuarios/            # App de autenticação personalizada
-│   │   ├── models.py        # Modelo Usuario com campos genero e idade
-│   │   ├── serializers.py   # Serializers para API
-│   │   ├── urls.py          # URLs da API, incluindo /api/dashboard/
-│   │   └── views.py         # Views incluindo dashboard_view
-│   ├── scripts/             # Scripts utilitários
-│   │   └── generate_fake_users.py # Script para gerar usuários fake
-│   ├── requirements.txt     # Dependências Python
-│   └── .env.example         # Exemplo de variáveis de ambiente
-├── frontend/                # Aplicação React
-│   ├── public/              # Arquivos estáticos
-│   ├── src/                 # Código-fonte React
-│   │   ├── components/      # Componentes reutilizáveis
-│   │   ├── pages/           # Páginas da aplicação
-│   │   ├── services/        # Serviços de API
-│   │   └── App.js           # Componente principal
-│   ├── package.json         # Dependências JavaScript
-│   └── tailwind.config.js   # Configuração do Tailwind
-├── README.md                # Este arquivo
-└── ROADMAP.md               # Planejamento de desenvolvimento
-```
-## 🧠 Contribuição
+## Status do Projeto
+🚧 Em desenvolvimento — aproximadamente **50%** concluído
 
-### Guia de Contribuição
-1. Faça um fork do repositório
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
-3. Implemente suas mudanças
-4. Execute os testes (quando implementados)
-5. Faça commit das alterações (`git commit -m 'Adiciona nova funcionalidade'`)
-6. Envie para a branch remota (`git push origin feature/nova-funcionalidade`)
-7. Abra um Pull Request
+### Progresso por módulo:
+- Autenticação: ✅ Completo
+- Dashboard: ✅ Métricas básicas funcionando
+- Módulo de Membros: ✅ Cadastro, Edição e Listagem concluídos
+- Infraestrutura: ✅ Deploy local testado
+- Painel de usuário e UI final: 🔄 Em desenvolvimento
+- Certificados, Financeiro, Sala Virtual: 🔜 Próximas fases
 
-### Sincronização (Desenvolvimento em 2 dispositivos)
-- Faça `git clone` do repositório nas duas máquinas
-- Use `git pull` antes de começar a trabalhar para obter mudanças recentes
-- Faça commits claros e objetivos
-- Use branches para novas features se necessário
-- Evite trabalhar simultaneamente nos mesmos arquivos em ambos dispositivos
+## Contribuição
+Pull requests são bem-vindos! Para mudanças maiores, abra uma issue para discussão prévia.
 
-## 🔄 Iterações Recentes
-
-### Última Iteração (24/05/2025)
-- Finalizada integração de autenticação condicional via BrowserRouter
-- Criadas rotas autenticadas para dashboard, membros e edição
-- Corrigido bug de renderização condicional baseado em autenticação
-- Refatorado App.jsx para separação de rotas
-- Implementado componente de edição com conexão ao backend
-
-### Iteração Anterior (19/05/2025)
-- Corrigido campo `data_batismo` com formato incorreto na API
-- Integração do formulário de cadastro com backend (formato de datas ajustado)
-- Testes de cadastro de membros concluídos com sucesso
-- Commit completo com atualizações do backend e frontend
-- Gerado README e ROADMAP atualizados
-
-### Próxima Iteração (Planejada)
-- Melhorar visualizações do dashboard no frontend
-- Conectar frontend com endpoint de dashboard
-- Expandir funcionalidades do módulo financeiro
-- Adicionar filtros e ordenações no frontend do cadastro de membros
-
-## 🚀 Prioridades Atuais
-- **ALTA:** Finalizar módulo de membros com filtros e edição completa
-- **ALTA:** Melhorar interface e responsividade geral do frontend
-- **MÉDIA:** Iniciar módulo financeiro
-- **BAIXA:** Iniciar preparação para deploy
-
-## 🛠️ Pontos Técnicos a Resolver
-- Otimizar queries da view de dashboard
-- Implementar cache para dados estáticos
-- Padronizar formatos de resposta da API
-- Criar middleware para autenticação JWT (planejado)
-- Definir estrutura de logs e mensagens de erro
-
-### Padrões de Código
-- Python: PEP 8
-- JavaScript: ESLint com configuração padrão do React
-- Commits: Use mensagens claras e concisas, prefixadas pelo tipo de alteração
-  (ex: `feat: adiciona autenticação`, `fix: corrige problema de CORS`)
-
-### Licença
-Este projeto está licenciado sob a MIT License - veja o arquivo LICENSE.md para detalhes.
-## 📞 Suporte e Contato
-
-Se você encontrar problemas ou tiver dúvidas sobre o projeto:
-- Abra uma issue no GitHub
-- Entre em contato com o desenvolvedor principal: [Maykon Douglas](mailto:mkinfoservice@gmail.com)
-- Consulte a documentação na Wiki do projeto (em desenvolvimento)
-
----
-
-Desenvolvido com 💻 por Maykon Douglas
+## Licença
+Projeto desenvolvido como iniciativa educacional para gestão eclesiástica.

@@ -1,121 +1,115 @@
-# 📍 ROADMAP - Sistema Igreja
 
-Este documento detalha o plano de desenvolvimento do **Sistema Igreja**, uma plataforma de gestão para igrejas 100% em nuvem.
+# ROADMAP - Sistema Igreja
 
-## 📅 Cronograma de Desenvolvimento
+Este documento descreve o progresso e plano detalhado do desenvolvimento do Sistema Igreja, uma solução 100% em nuvem para gestão e administração de igrejas.
 
-### ✅ Fase 1: Fundação e Estrutura Básica
-- Configuração inicial do projeto Django
-- Configuração do React com TailwindCSS
-- Integração entre backend e frontend
-- Implementação do modelo de usuário personalizado (`Usuario`)
-- Configuração de autenticação básica
-- Implementação da rota de teste da API
-- Correção do modelo de usuário personalizado (campos e referências)
-- Adição dos campos `genero` e `idade` ao modelo `Usuario`
-- Implementação da view `dashboard_view` com métricas de usuários
-- Criação da rota `/api/dashboard/`
-- Desenvolvimento de script para geração de usuários fake para testes
+## 🧱 Fase 1: Fundação e Estrutura ✅ (Concluída)
+- Configuração do projeto Django com modelo de usuário personalizado (`Usuario`)
+- Setup do React + TailwindCSS
+- Integração inicial entre backend (Django) e frontend (React)
+- Autenticação JWT com refresh automático via tokens
+- Middleware CORS e configuração de headers no Django
+- Primeiras rotas públicas e protegidas no backend
+- Testes iniciais de comunicação com o frontend
+- Customização do Login e Logout integrados com JWT
 
-### 🚧 Fase 2: Desenvolvimento dos Módulos Principais
-#### Módulo de Cadastro de Membros (Em Andamento)
-- Modelo base de usuários/membros
-- API para listagem e métricas básicas de usuários
-- Funcionalidades de busca e filtro avançados
-- Importação e exportação de dados (CSV/Excel)
-- Categorização de membros (Visitante, Membro, Líder, etc.)
-- Histórico de atividades por membro
+## 👥 Módulo de Usuários e Dashboard ✅ (Concluído)
+- Campos personalizados no modelo `Usuario`: `genero`, `idade`
+- View de Dashboard com métricas:
+  - Total de usuários
+  - Usuários ativos vs inativos
+  - Gráficos por faixa etária e gênero (React Chart.js)
+- Rota protegida `/api/dashboard/` e visualização no frontend
+- Tratamento de erros e proteção de rota com tokens
 
-#### Módulo de Dashboard e Relatórios (Em Andamento)
-- Dashboard com métricas básicas de usuários
-- Visualização de distribuição por gênero
-- Visualização de distribuição por faixa etária
-- Relatórios de crescimento (semanal, mensal, anual)
-- Exportação de relatórios em PDF
-- Dashboard financeiro
+## 👨‍👩‍👧 Cadastro e Gestão de Membros ✅ (Parcialmente Concluído)
+- Criação do modelo `Membro` com:
+  - Nome completo, CPF, RG, nascimento, endereço, telefone, email
+  - Campos booleanos: batizado, ativo
+  - Gênero, idade, data de batismo, ministério
+- Integração com `Usuario` (campo `usuario_responsavel`)
+- Cadastro de membros via frontend com validação
+- Rota `/api/membros/` protegida e funcional
+- Listagem de membros com autenticação
+- Edição de membro em progresso
+- Preparação do CRUD completo no React
 
-#### Módulo Financeiro (Iniciado)
-- Cadastro de receitas e despesas
-- Categorias financeiras personalizáveis
-- Gestão de dízimos e ofertas
-- Relatórios financeiros
-- Controle de contas a pagar e receber
-- Integração com sistemas de pagamento online (opcional)
+## 🔐 Autenticação JWT ✅
+- Implementação do `TokenObtainPairView` com `CustomTokenObtainPairSerializer`
+- Retorno do token + informações básicas do usuário
+- Armazenamento de token no `localStorage`
+- Middleware de refresh a cada 4 minutos no frontend
 
-#### Módulo de Certificados
-- Templates de certificados personalizáveis
-- Geração automática de certificados (batismo, casamento, cursos)
-- Emissão em PDF com assinatura digital
-- Registro histórico de certificados emitidos
+## 🌐 Frontend (React + TailwindCSS) ✅
+- Estrutura moderna com Tailwind e React Router
+- Componentes isolados:
+  - Login.jsx
+  - Dashboard.jsx
+  - CadastroMembro.jsx
+  - ListagemMembros.jsx
+  - EditarMembro.jsx
+- Navegação com rotas privadas autenticadas (`BrowserRouter`)
+- Comunicação com o backend via Axios (com headers JWT)
 
-#### Módulo de Sala Virtual
-- Integração com serviço de streaming
-- Agendamento de transmissões
-- Chat durante transmissões
-- Biblioteca de transmissões anteriores
+## 🗃️ Estrutura de Pastas (Atual)
+```
+/sistema_igreja/
+  └── usuarios/
+      ├── models.py
+      ├── serializers.py
+      ├── views.py
+      ├── urls.py
 
-### 🔮 Fase 3: Aprimoramento da Interface
-- Desenvolvimento da interface completa do frontend
-- Design mobile-first e responsivo
-- Implementação de temas personalizáveis
-- Melhorias de acessibilidade
-- Otimização para dispositivos móveis
+/frontend/
+  ├── components/
+  │   ├── CadastroMembro.jsx
+  │   ├── ListagemMembros.jsx
+  │   ├── EditarMembro.jsx
+  └── pages/
+      ├── Login.jsx
+      ├── Dashboard.jsx
+  └── App.jsx
+```
 
-### 🔮 Fase 4: Estabilização e Implantação
-- Testes unitários e de integração
-- Correção de bugs e otimizações
+## ✅ Etapas Concluídas
+- Integração entre frontend/backend com autenticação protegida
+- Dashboard com dados analíticos reais
+- Cadastro de membros funcional (via frontend e backend)
+- Estruturação visual da aplicação
+- Primeira fase de testes locais
+
+## 🚧 Etapas Pendentes
+### Backend:
+- CRUD completo de Membros (editar e deletar)
+- Emissão de Certificados
+- Relatórios analíticos avançados (PDFs, exportação)
+- Módulo Financeiro
+- Integração com transmissões ao vivo (sala virtual)
+- Testes automatizados
 - Migração para PostgreSQL
-- Deploy para ambiente de produção (Railway/Vercel)
-- Documentação completa para usuários
 
-### 🔮 Fase 5: Expansão e Recursos Avançados
-- Sistema de backup automático
-- Sistema de notificações (email/push)
-- Aplicativo móvel (React Native)
-- Integração com serviços de email marketing
-- Módulo de eventos e inscrições
-- Módulo de gestão de células/grupos pequenos
+### Frontend:
+- Páginas de visualização, edição e exclusão de membros
+- Interface mobile-first mais refinada
+- Consumo de certificados e dados financeiros
+- Dashboard financeiro
+- Upload de arquivos (opcional)
+- Filtros avançados na listagem
 
-## 📊 Métricas de Progresso
-- Fase 1: ✅ 100% concluída
-- Fase 2: 🔄 35% concluída
-- Fase 3: 🔄 10% concluída
-- Fase 4: ⏳ 0% concluída
-- Fase 5: ⏳ 0% concluída
+### Infraestrutura:
+- Deploy do backend na Railway
+- Deploy do frontend na Vercel
+- Configuração de domínio e SSL
+- CI/CD (opcional)
+- Backup automático
 
-**Progresso Total: Aproximadamente 35% concluído**
+## 📊 Progresso Geral
+- Fase 1: ✅ 100%
+- Fase 2: 🟨 50%
+- Fase 3: 🟨 25%
+- Fase 4: ⬜ 0%
+- Fase 5: ⬜ 0%
+- **Status Total: 40-45% concluído**
 
-## 🔄 Iterações Recentes
-
-### Última Iteração (24/05/2025)
-- Finalizada integração de autenticação condicional via BrowserRouter
-- Criadas rotas autenticadas para dashboard, membros e edição
-- Corrigido bug de renderização condicional baseado em autenticação
-- Refatorado App.jsx para separação de rotas
-- Implementado componente de edição com conexão ao backend
-
-### Iteração Anterior (19/05/2025)
-- Corrigido campo `data_batismo` com formato incorreto na API
-- Integração do formulário de cadastro com backend (formato de datas ajustado)
-- Testes de cadastro de membros concluídos com sucesso
-- Commit completo com atualizações do backend e frontend
-- Gerado README e ROADMAP atualizados
-
-### Próxima Iteração (Planejada)
-- Melhorar visualizações do dashboard no frontend
-- Conectar frontend com endpoint de dashboard
-- Expandir funcionalidades do módulo financeiro
-- Adicionar filtros e ordenações no frontend do cadastro de membros
-
-## 🚀 Prioridades Atuais
-- **ALTA:** Finalizar módulo de membros com filtros e edição completa
-- **ALTA:** Melhorar interface e responsividade geral do frontend
-- **MÉDIA:** Iniciar módulo financeiro
-- **BAIXA:** Iniciar preparação para deploy
-
-## 🛠️ Pontos Técnicos a Resolver
-- Otimizar queries da view de dashboard
-- Implementar cache para dados estáticos
-- Padronizar formatos de resposta da API
-- Criar middleware para autenticação JWT (planejado)
-- Definir estrutura de logs e mensagens de erro
+---
+**Última atualização:** 30/05/2025
