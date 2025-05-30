@@ -61,7 +61,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-100 p-4">
         <Routes>
-          <Route path="/membros" element={<MembrosPage />} />
+          <Route path="/membros" element={<MembrosPage onLogout={logout} />} />
         </Routes>
         {isAuthenticated ? (
           <AuthRoutes onLogout={logout} />

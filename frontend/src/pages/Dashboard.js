@@ -13,6 +13,10 @@ function Dashboard({ onLogout }) {
         onLogout();
         return;
       }
+      
+      if (typeof onLogout === 'function') {
+        onLogout();
+      }
 
       try {
         const response = await axios.get('http://localhost:8000/api/dashboard/', {
