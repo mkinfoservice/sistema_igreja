@@ -111,5 +111,82 @@ Este documento descreve o progresso e plano detalhado do desenvolvimento do Sist
 - Fase 5: ⬜ 0%
 - **Status Total: 40-45% concluído**
 
+## ✅ STATUS ATUAL
+- Implementamos:
+
+- Backend com autenticação JWT
+
+- Modelo de usuário personalizado com campos extras (genero, idade)
+
+- Cadastro, listagem e edição de membros
+
+- Dashboard funcional com métricas (por gênero e faixa etária)
+
+- Integração completa com frontend (React + Tailwind)
+
+- Organização de rotas autenticadas com React Router
+
+- Atualização dos arquivos README.md e ROADMAP.md
+
+## 🚀 PRÓXIMOS PASSOS (em ordem sugerida)
+## 🔹 1. Finalizar fluxo de edição de membros
+ - Permitir edição completa com validação no frontend
+
+ - Confirmar edição com feedback visual (mensagem ou alerta)
+
+ - Ajustar rota de PUT/PATCH no backend se necessário
+
+## 🔹 2. Implementar a exclusão de membros
+ - Criar botão de exclusão por membro
+
+ - Confirmar exclusão com modal ou alerta
+
+ - Criar rota de DELETE no backend e conectar ao frontend
+
+## 🔹 3. Melhorar experiência da listagem de membros
+ - Adicionar busca por nome ou CPF
+
+ - Paginação (caso a lista fique longa)
+
+ - Filtros por status (ativo/inativo), gênero e idade
+
+## 🔹 4. Iniciar módulo de certificados
+ - Criar modelo Certificado no backend
+
+ - Vincular a membros
+
+ - Gerar certificado em PDF (ex: batismo, curso)
+
+ - Visualizar histórico no frontend
+
+## 🔹 5. Iniciar módulo financeiro
+ - Modelos: Receita, Despesa, Categoria
+
+ - Cadastro e listagem
+
+ - Relatórios por mês e categorias
+
+ - Dashboard financeiro
+
+## 🔹 6. Melhorias na interface e usabilidade
+ - Criar um menu lateral ou navbar
+
+ - Separar páginas com navegação clara (dashboard, membros, etc.)
+
+ - Melhorar responsividade (mobile-first)
+
+## 🔹 7. Preparar para produção
+ - Migrar banco de dados para PostgreSQL
+
+ - Criar .env com variáveis sensíveis
+
+ - Deploy do backend (Railway)
+
+ - Deploy do frontend (Vercel)
+
+ - Configurar domínio e SSL
+
+
+
 ---
 **Última atualização:** 30/05/2025
