@@ -1,88 +1,124 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { Input } from '../../components/ui/Input';
-import { Button } from '../../components/ui/Button';
-import { Label } from '../../components/ui/Label';
-import { Card } from '../../components/ui/Card';
+import { useNavigate, useParams } from "react-router-dom";
+import { Input } from "../../components/ui/Input";
+import { Button } from "../../components/ui/Button";
+import { Card } from "../../components/ui/Card";
 
 const EditarMembro = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const [membro, setMembro] = useState({
-        nome: "",
-        funcao: "",
-        idade: "",
-        genero: "",
-        data_batismo: "",
-    });
-    const [isLoading, setIsLoading] = useState(false);
-    const [isFetching, setIsFetching] = useState(true);
-    const [error, setError] = useState(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    nome_completo: "",
+    cpf: "",
+    rg: "",
+    data_nascimento: "",
+    endereco: "",
+    telefone: "",
+    email: "",
+    batizado: false,
+    data_batismo: "",
+    ministerio: "",
+    ativo: true,
+    genero: "N",
+    idade: ""
+  });
 
-    // Configuração do Axios para incluir o token em todas as requisições
-axios.interceptors.request.use(config => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    } return config;
-});
-    useEffect(() => {
-        const fetchMembro = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/api/membros/${id}/`);
-                //Formata a data para o input type = "date" (YYYY-MM-DD)
-                if (response.data.data_batismo) {
-                    response.data.data_batismo = new Date(response.data.data_batismo).toISOString().split("T")[0];
-                }
-                setMembro(response.data);
-                setError(null);
-            } catch (err) {
-                console.error("Erro ao buscar membro:", err);
-                setError("Erro ao buscar membro. Por favor, tente novamente mais tarde.");
-                if (err.response?.status === 401){
-                    navigate("/login");
-                }
-            } finally {
-                setIsFetching(false);
-            }
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchMembro = async () => {
+      const token = localStorage.getItem("access_token");
+      try {
+        const response = await fetch(`http://localhost:8000/api/membros/${id}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error("Erro ao buscar dados do membro");
         }
-        fetchMembro();
-    }, [id, navigate]);
 
-    const handleChange = (e) => {
-        setMembro({...membro, [e.target.name]: e.target.value });
+        const data = await response.json();
+        setFormData(data);
+      } catch (err) {
+        console.error(err);
+        setError("Erro ao carregar dados do membro.");
+      }
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-         axios.put(`http://localhost:8000/api/membros/${id}/`, membro)
-            .then(() => navigate("/membros"))
-            .catch(err => console.error("Erro ao atualizar membro:", err))
-            .finally(() => setIsLoading(false));
-    };
-    if (isFetching) {
-        return (
-            <div className="p-4 max-w-xl mx-auto flex justify-center">
-                <p>Carregando membro...</p>
-            </div>
-        );
+    fetchMembro();
+  }, [id]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const token = localStorage.getItem("access_token");
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/membros/${id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao salvar alterações");
+      }
+
+      alert("Alterações salvas com sucesso!");
+      navigate("/membros");
+    } catch (err) {
+      console.error(err);
+      setError("Erro ao salvar alterações.");
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    return (
-        <div className="p-4 max-w-xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Editar Membro</h2>
-            <Card className="p-4 space-y-4">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* ... (seus campos de formulário permanecem os mesmos) ... */}
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? "Salvando..." : "Salvar Alterações"}
-                    </Button>
-                </form>
-            </Card>
-        </div>
-    );
+  return (
+    <div className="p-4 max-w-xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Editar Membro</h2>
+      <Card className="p-4 space-y-4">
+        {error && <p className="text-red-500">{error}</p>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input name="nome_completo" value={formData.nome_completo} onChange={handleChange} placeholder="Nome completo" required />
+          <Input name="cpf" value={formData.cpf} onChange={handleChange} placeholder="CPF" required />
+          <Input name="rg" value={formData.rg} onChange={handleChange} placeholder="RG" />
+          <Input type="date" name="data_nascimento" value={formData.data_nascimento} onChange={handleChange} required />
+          <Input name="endereco" value={formData.endereco} onChange={handleChange} placeholder="Endereço" />
+          <Input name="telefone" value={formData.telefone} onChange={handleChange} placeholder="Telefone" />
+          <Input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email" />
+          <label className="flex items-center">
+            <input type="checkbox" name="batizado" checked={formData.batizado} onChange={handleChange} className="mr-2" />
+            Batizado
+          </label>
+          <Input type="date" name="data_batismo" value={formData.data_batismo || ""} onChange={handleChange} />
+          <Input name="ministerio" value={formData.ministerio} onChange={handleChange} placeholder="Ministério" />
+          <select name="genero" value={formData.genero} onChange={handleChange} className="w-full p-2 border rounded">
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+          </select>
+          <Input type="number" name="idade" value={formData.idade} onChange={handleChange} placeholder="Idade" />
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Salvando..." : "Salvar Alterações"}
+          </Button>
+        </form>
+      </Card>
+    </div>
+  );
 };
 
 export default EditarMembro;

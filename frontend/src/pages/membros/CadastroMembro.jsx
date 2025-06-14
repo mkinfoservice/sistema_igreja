@@ -76,8 +76,6 @@ function CadastroMembro() {
         <select name="genero" value={formData.genero} onChange={handleChange} className="w-full border p-2 rounded">
           <option value="M">Masculino</option>
           <option value="F">Feminino</option>
-          <option value="O">Outro</option>
-          <option value="N">Prefere não informar</option>
         </select>
         <input type="number" name="idade" value={formData.idade} onChange={handleChange} placeholder="Idade" className="w-full border p-2 rounded" />
         <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Cadastrar</button>

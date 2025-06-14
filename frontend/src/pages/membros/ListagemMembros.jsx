@@ -16,7 +16,7 @@ const ListagemMembros = () => {
             const token = localStorage.getItem("access_token");
             setLoading(true);
             setError(null);
-            
+    
             try {
                 const response = await fetch("http://localhost:8000/api/membros/", {
                     method: "GET",
@@ -25,19 +25,19 @@ const ListagemMembros = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
+    
                 if (response.status === 401) {
                     navigate("/login");
                     return;
                 }
-
+    
                 if (!response.ok) {
                     throw new Error(`Erro ${response.status}: ${response.statusText}`);
                 }
-
+    
                 const data = await response.json();
                 setMembros(data);
-                console.log("Dados recebidos:", data); // Para debug
+                console.log("Dados recebidos:", data);
             } catch (error) {
                 console.error("Erro ao buscar membros:", error);
                 setError(error.message);
@@ -45,16 +45,16 @@ const ListagemMembros = () => {
                 setLoading(false);
             }
         };
-
+    
         fetchMembros();
     }, [navigate]);
-
+    
     const handleDelete = async (membroId) => {
         const confirmar = window.confirm("Tem certeza que deseja excluir este membro?");
         if (!confirmar) return;
-
+    
         const token = localStorage.getItem("access_token");
-
+    
         try {
             const response = await fetch(`http://localhost:8000/api/membros/${membroId}/`, {
                 method: "DELETE",
@@ -63,11 +63,11 @@ const ListagemMembros = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
+    
             if (!response.ok) {
                 throw new Error("Erro ao excluir membro");
             }
-
+    
             setMembros(prevMembros => prevMembros.filter(m => m.id !== membroId));
             alert("Membro excluído com sucesso!");
         } catch (error) {
@@ -75,26 +75,26 @@ const ListagemMembros = () => {
             alert("Erro ao excluir o membro.");
         }
     };
-
+    
     const membrosFiltrados = membros.filter((membro) =>
-        membro.nome?.toLowerCase().includes(busca.toLowerCase()) ||
-        membro.funcao?.toLowerCase().includes(busca.toLowerCase())
+        membro.nome_completo?.toLowerCase().includes(busca.toLowerCase()) ||
+        membro.ministerio?.toLowerCase().includes(busca.toLowerCase())
     );
-
+    
     return (
         <div className="p-4 space-y-4">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Membros Cadastrados</h2>
                 <Button onClick={() => navigate("/membros/cadastrar")}>+ Novo Membro</Button>
             </div>
-
+    
             <Input
                 placeholder="Buscar membro por nome ou função..."
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
                 className="w-full md:w-1/2"
             />
-
+    
             {loading ? (
                 <p>Carregando membros...</p>
             ) : error ? (
@@ -106,7 +106,7 @@ const ListagemMembros = () => {
                             <tr>
                                 <th className="p-4">Nome</th>
                                 <th className="p-4">Função</th>
-                                <th className="p-4">Gênero</th>
+                                <th className="p-4">CPF</th>
                                 <th className="p-4">Idade</th>
                                 <th className="p-4">Data de Batismo</th>
                                 <th className="p-4">Ações</th>
@@ -116,11 +116,11 @@ const ListagemMembros = () => {
                             {membrosFiltrados.length > 0 ? (
                                 membrosFiltrados.map((membro) => (
                                     <tr key={membro.id} className="border-b hover:bg-gray-50">
-                                        <td className="p-4">{membro.nome}</td>
-                                        <td className="p-4">{membro.funcao}</td>
-                                        <td className="p-4">{membro.genero}</td>
+                                        <td className="p-4">{membro.nome_completo}</td>
+                                        <td className="p-4">{membro.ministerio || "—"}</td>
+                                        <td className="p-4">{membro.cpf}</td>
                                         <td className="p-4">{membro.idade}</td>
-                                        <td className="p-4">{membro.data_batismo}</td>
+                                        <td className="p-4">{membro.data_batismo || "—"}</td>
                                         <td className="p-4 flex gap-2">
                                             <Button 
                                                 onClick={() => navigate(`/membros/editar/${membro.id}`)} 

@@ -63,46 +63,10 @@ const MembrosPage = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Lista de Membros</h2>
-        <input
-          type="text"
-          placeholder="Buscar membros..."
-          className="p-2 border rounded"
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-        />
-      </div>
+     
 
-      {membrosFiltrados.length === 0 ? (
-        <p className="p-4">Nenhum membro encontrado</p>
-      ) : (
-        <div className="space-y-3">
-          {membrosFiltrados.map(membro => (
-            <div key={membro.id} className="p-4 border rounded shadow">
-              <p><strong>Nome:</strong> {membro.nome_completo}</p>
-              <p><strong>Email:</strong> {membro.email}</p>
-              <p><strong>Telefone:</strong> {membro.telefone}</p>
-              <p><strong>CPF:</strong> {membro.cpf}</p>
-              <div className="flex gap-2 mt-2">
-                <button
-                  onClick={() => navigate(`/membros/editar/${membro.id}`)}
-                  className="px-3 py-1 bg-blue-500 text-white rounded"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleDelete(membro.id)}
-                  className="px-3 py-1 bg-red-500 text-white rounded"
-                >
-                  Excluir
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+      
+    </div> 
   );
 };
 
