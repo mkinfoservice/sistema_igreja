@@ -5,32 +5,36 @@ import { Home, Users, DollarSign, Award, Video } from 'lucide-react';
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const modules = [
     { path: '/dashboard', name: 'Dashboard', icon: Home, status: 'complete' },
-    { path: '/MembrosPage', name: 'Membros', icon: Users, status: 'complete' },
-    { path: '/financial', name: 'Financeiro', icon: DollarSign, status: 'complete' },
+    { path: '/members', name: 'Membros', icon: Users, status: 'complete' },
+    { path: '/financial', name: 'Financeiro', icon: DollarSign, status: 'upcoming' },
     { path: '/certificates', name: 'Certificados', icon: Award, status: 'upcoming' },
     { path: '/virtual-room', name: 'Sala Virtual', icon: Video, status: 'upcoming' },
   ];
 
   return (
-    <aside className={`
+    <aside
+      className={`
       fixed lg:static inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out
       ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       pt-16 lg:pt-0
-    `}>
+    `}
+    >
       <nav className="p-4 space-y-2">
         {modules.map((module) => {
           const Icon = module.icon;
           const isUpcoming = module.status === 'upcoming';
-          
+
           return (
             <NavLink
               key={module.path}
-              to={module.path}
-              onClick={() => setSidebarOpen(false)}
+              to={isUpcoming ? '#' : module.path}
+              onClick={() => {
+                if (!isUpcoming) setSidebarOpen(false);
+              }}
               className={({ isActive }) => `
                 w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors
                 ${isActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}
-                ${isUpcoming ? 'opacity-50 pointer-events-none' : ''}
+                ${isUpcoming ? 'opacity-50 cursor-not-allowed' : ''}
               `}
             >
               <Icon className="h-5 w-5 flex-shrink-0" />

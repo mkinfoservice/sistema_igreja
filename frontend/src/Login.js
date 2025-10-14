@@ -22,7 +22,7 @@ function Login({ onLoginSuccess }) {
       onLoginSuccess(response.data.access, response.data.refresh);
 
       //  Redireciona para o dashboard
-      navigate('/dashboard');
+      navigate('login');
     } catch (err) {
       console.error(err);
       setErro('Credenciais inválidas');

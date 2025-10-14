@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import MainLayout from './components/layout/Layout.jsx';
+import Layout from './components/layout/Layout.jsx';
 import Dashboard from './pages/Dashboard';
-import Members from './pages/MembrosPage';
+import Members from './pages/Members.jsx';
 import Financial from './pages/Financial';
 import Certificates from './pages/Certificates';
 import VirtualRoom from './pages/VirtualRoom';
 import Login from './pages/Login';
-import { AuthRoutes } from './routes/AuthRoutes';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -61,7 +60,7 @@ function App() {
 
   // Rota Protegida
   const PrivateRoute = ({ children }) => {
-    return isAuthenticated ? children : <Navigate to="/dashboard" />;
+    return isAuthenticated ? children : <Navigate to="/login" />;
   };
 
   return (
@@ -71,12 +70,15 @@ function App() {
         <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
 
         {/* Rotas Protegidas */}
-        <Route path="/" element={
-          <PrivateRoute>
-            <MainLayout />
-          </PrivateRoute>
-        }>
-          <Route index element={<Navigate to="/login" replace />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Layout />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="members" element={<Members />} />
           <Route path="financial" element={<Financial />} />

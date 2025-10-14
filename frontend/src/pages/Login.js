@@ -19,7 +19,7 @@ function Login({ onLoginSuccess }) {
       });
 
       onLoginSuccess(response.data.access, response.data.refresh);
-      navigate('/financial', { replace: true });
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       console.error(err);
       setErro('Credenciais inválidas');
