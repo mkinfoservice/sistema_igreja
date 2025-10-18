@@ -1,192 +1,127 @@
+# 🛠️ ROADMAP — Sistema Igreja Full
 
-# ROADMAP - Sistema Igreja
-
-Este documento descreve o progresso e plano detalhado do desenvolvimento do Sistema Igreja, uma solução 100% em nuvem para gestão e administração de igrejas.
-
-## 🧱 Fase 1: Fundação e Estrutura ✅ (Concluída)
-- Configuração do projeto Django com modelo de usuário personalizado (`Usuario`)
-- Setup do React + TailwindCSS
-- Integração inicial entre backend (Django) e frontend (React)
-- Autenticação JWT com refresh automático via tokens
-- Middleware CORS e configuração de headers no Django
-- Primeiras rotas públicas e protegidas no backend
-- Testes iniciais de comunicação com o frontend
-- Customização do Login e Logout integrados com JWT
-
-## 👥 Módulo de Usuários e Dashboard ✅ (Concluído)
-- Campos personalizados no modelo `Usuario`: `genero`, `idade`
-- View de Dashboard com métricas:
-  - Total de usuários
-  - Usuários ativos vs inativos
-  - Gráficos por faixa etária e gênero (React Chart.js)
-- Rota protegida `/api/dashboard/` e visualização no frontend
-- Tratamento de erros e proteção de rota com tokens
-
-## 👨‍👩‍👧 Cadastro e Gestão de Membros ✅ (Parcialmente Concluído)
-- Criação do modelo `Membro` com:
-  - Nome completo, CPF, RG, nascimento, endereço, telefone, email
-  - Campos booleanos: batizado, ativo
-  - Gênero, idade, data de batismo, ministério
-- Integração com `Usuario` (campo `usuario_responsavel`)
-- Cadastro de membros via frontend com validação
-- Rota `/api/membros/` protegida e funcional
-- Listagem de membros com autenticação
-- Edição de membro em progresso
-- Preparação do CRUD completo no React
-
-## 🔐 Autenticação JWT ✅
-- Implementação do `TokenObtainPairView` com `CustomTokenObtainPairSerializer`
-- Retorno do token + informações básicas do usuário
-- Armazenamento de token no `localStorage`
-- Middleware de refresh a cada 4 minutos no frontend
-
-## 🌐 Frontend (React + TailwindCSS) ✅
-- Estrutura moderna com Tailwind e React Router
-- Componentes isolados:
-  - Login.jsx
-  - Dashboard.jsx
-  - CadastroMembro.jsx
-  - ListagemMembros.jsx
-  - EditarMembro.jsx
-- Navegação com rotas privadas autenticadas (`BrowserRouter`)
-- Comunicação com o backend via Axios (com headers JWT)
-
-## 🗃️ Estrutura de Pastas (Atual)
-```
-/sistema_igreja/
-  └── usuarios/
-      ├── models.py
-      ├── serializers.py
-      ├── views.py
-      ├── urls.py
-
-/frontend/
-  ├── components/
-  │   ├── CadastroMembro.jsx
-  │   ├── ListagemMembros.jsx
-  │   ├── EditarMembro.jsx
-  └── pages/
-      ├── Login.jsx
-      ├── Dashboard.jsx
-  └── App.jsx
-```
-
-## ✅ Etapas Concluídas
-- Integração entre frontend/backend com autenticação protegida
-- Dashboard com dados analíticos reais
-- Cadastro de membros funcional (via frontend e backend)
-- Estruturação visual da aplicação
-- Primeira fase de testes locais
-
-## 🚧 Etapas Pendentes
-### Backend:
-- CRUD completo de Membros (editar e deletar)
-- Emissão de Certificados
-- Relatórios analíticos avançados (PDFs, exportação)
-- Módulo Financeiro
-- Integração com transmissões ao vivo (sala virtual)
-- Testes automatizados
-- Migração para PostgreSQL
-
-### Frontend:
-- Páginas de visualização, edição e exclusão de membros
-- Interface mobile-first mais refinada
-- Consumo de certificados e dados financeiros
-- Dashboard financeiro
-- Upload de arquivos (opcional)
-- Filtros avançados na listagem
-
-### Infraestrutura:
-- Deploy do backend na Railway
-- Deploy do frontend na Vercel
-- Configuração de domínio e SSL
-- CI/CD (opcional)
-- Backup automático
-
-## 📊 Progresso Geral
-- Fase 1: ✅ 100%
-- Fase 2: 🟨 50%
-- Fase 3: 🟨 25%
-- Fase 4: ⬜ 0%
-- Fase 5: ⬜ 0%
-- **Status Total: 40-45% concluído**
-
-## ✅ STATUS ATUAL
-- Implementamos:
-
-- Backend com autenticação JWT
-
-- Modelo de usuário personalizado com campos extras (genero, idade)
-
-- Cadastro, listagem e edição de membros
-
-- Dashboard funcional com métricas (por gênero e faixa etária)
-
-- Integração completa com frontend (React + Tailwind)
-
-- Organização de rotas autenticadas com React Router
-
-- Atualização dos arquivos README.md e ROADMAP.md
-
-## 🚀 PRÓXIMOS PASSOS (em ordem sugerida)
-## 🔹 1. Finalizar fluxo de edição de membros
- - Permitir edição completa com validação no frontend
-
- - Confirmar edição com feedback visual (mensagem ou alerta)
-
- - Ajustar rota de PUT/PATCH no backend se necessário
-
-## 🔹 2. Implementar a exclusão de membros
- - Criar botão de exclusão por membro
-
- - Confirmar exclusão com modal ou alerta
-
- - Criar rota de DELETE no backend e conectar ao frontend
-
-## 🔹 3. Melhorar experiência da listagem de membros
- - Adicionar busca por nome ou CPF
-
- - Paginação (caso a lista fique longa)
-
- - Filtros por status (ativo/inativo), gênero e idade
-
-## 🔹 4. Iniciar módulo de certificados
- - Criar modelo Certificado no backend
-
- - Vincular a membros
-
- - Gerar certificado em PDF (ex: batismo, curso)
-
- - Visualizar histórico no frontend
-
-## 🔹 5. Iniciar módulo financeiro
- - Modelos: Receita, Despesa, Categoria
-
- - Cadastro e listagem
-
- - Relatórios por mês e categorias
-
- - Dashboard financeiro
-
-## 🔹 6. Melhorias na interface e usabilidade
- - Criar um menu lateral ou navbar
-
- - Separar páginas com navegação clara (dashboard, membros, etc.)
-
- - Melhorar responsividade (mobile-first)
-
-## 🔹 7. Preparar para produção
- - Migrar banco de dados para PostgreSQL
-
- - Criar .env com variáveis sensíveis
-
- - Deploy do backend (Railway)
-
- - Deploy do frontend (Vercel)
-
- - Configurar domínio e SSL
-
-
+Este documento apresenta a trajetória e o estado atual do projeto **Sistema Igreja Full**, uma plataforma completa de gestão e administração de igrejas em nuvem, desenvolvida com **Django (backend)** e **React (frontend)**.
 
 ---
-**Última atualização:** 30/05/2025
+
+## 📅 Fases de Desenvolvimento
+
+### 🏗️ Fase 1 — Estrutura Básica ✅ *Concluída*
+- Configuração inicial do projeto Django e React
+- Integração entre backend e frontend
+- Criação do modelo de usuário personalizado (Usuario)
+- Configuração de autenticação JWT com SimpleJWT
+- Implementação de CORS e conexão segura entre sistemas
+- Rota de teste da API e estrutura REST
+- Correção do modelo de usuário e campos personalizados
+- View `dashboard_view` com métricas
+- Rota `/api/dashboard/` implementada
+- Script de geração de usuários fake para testes
+
+🟢 **Progresso:** 100%
+
+---
+
+### ⚙️ Fase 2 — Módulos Principais 🚧 *Em Desenvolvimento*
+#### ✅ **Módulo de Membros**
+- CRUD completo implementado:
+  - Cadastro de membros
+  - Listagem de membros com busca e filtros
+  - Edição e exclusão de membros
+  - Comunicação via API protegida com JWT
+- Integração total entre Django e React
+- Interface funcional conectada e validada com backend
+
+#### ✅ **Dashboard**
+- Métricas básicas (gênero, idade, total de membros)
+- Endpoint e visual conectados no frontend
+
+#### 🔄 **Interface e Painel**
+- Layout base implementado (`Layout.jsx`)
+- Header, menu lateral, footer e navegação com React Router
+- Responsividade parcial e design inicial do painel
+
+🟡 **Progresso estimado:** 70%
+
+---
+
+### 🎨 Fase 3 — Interface e UX 🔄 *Em Andamento*
+- Criação da página principal **Gestão Igreja Full**
+- Estrutura de navegação global com React Router DOM
+- Layout limpo e responsivo
+- Padronização visual com TailwindCSS
+- Integração de componentes reutilizáveis (Cards, Inputs, Botões)
+
+🟡 **Progresso estimado:** 40%
+
+---
+
+### 🧪 Fase 4 — Estabilização e Deploy ⏳ *Não Iniciada*
+- Testes automatizados (Django + React)
+- Logs e sistema de monitoramento
+- Migração para **PostgreSQL** em produção
+- Deploy no **Railway (backend)** e **Vercel (frontend)**
+- Configuração de domínio e SSL
+
+⚪ **Progresso:** 0%
+
+---
+
+### 🚀 Fase 5 — Expansão e Recursos Avançados 🔜 *Planejada*
+- **Módulo de Certificados** (emissão e templates personalizados)
+- **Módulo Financeiro** (receitas, despesas, dízimos)
+- **Módulo de Sala Virtual** (transmissões ao vivo e biblioteca)
+- Relatórios e gráficos avançados
+- Sistema de backup automático
+- Notificações (email/push)
+- Aplicativo móvel (React Native)
+
+⚪ **Progresso:** 0%
+
+---
+
+## 📊 Situação Atual — Junho/2025
+
+| Módulo / Área | Status | Descrição |
+|----------------|---------|------------|
+| **Autenticação** | ✅ Concluído | JWT e autenticação funcionando com login/logout |
+| **Dashboard** | ✅ Concluído | Métricas integradas e conectadas ao frontend |
+| **Membros** | ✅ Concluído | CRUD completo (cadastro, edição, listagem, exclusão) |
+| **UI / Layout** | 🔄 Em andamento | Layout global e navegação entre módulos |
+| **Infraestrutura Local** | ✅ Concluído | Sistema rodando perfeitamente em ambiente local |
+| **Deploy Produção** | ⏳ Pendente | Railway + Vercel ainda não configurados |
+| **Certificados** | ⏳ Pendente | Não iniciado |
+| **Financeiro** | ⏳ Pendente | Não iniciado |
+| **Sala Virtual** | ⏳ Pendente | Não iniciado |
+| **Relatórios/Gráficos** | 🔄 Parcial | Integração futura com dashboard |
+| **Testes Automatizados** | ⏳ Pendente | Não iniciado |
+| **Backup e Logs** | ⏳ Pendente | Planejado para fase final |
+
+---
+
+## 📈 Progresso Geral
+
+| Fase | Percentual | Situação |
+|-------|-------------|-----------|
+| Fase 1 | 100% | ✅ Concluída |
+| Fase 2 | 70% | 🚧 Em desenvolvimento |
+| Fase 3 | 40% | 🔄 Em andamento |
+| Fase 4 | 0% | ⏳ Pendente |
+| Fase 5 | 0% | 🔜 Planejada |
+
+📊 **Progresso total estimado:** **≈ 50% concluído**
+
+---
+
+## 🔮 Próximos Passos Imediatos
+
+1. Concluir layout global e navegação entre páginas
+2. Melhorar responsividade e design mobile-first
+3. Implementar módulo de **Certificados**
+4. Criar módulo **Financeiro**
+5. Configurar **PostgreSQL** e ambiente de produção
+6. Preparar documentação e README final para release
+
+---
+
+✍️ **Última atualização:** 18 de Outubro de 2025
