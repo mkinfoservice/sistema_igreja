@@ -8,6 +8,7 @@ import Financial from './pages/Financial';
 import Certificates from './pages/Certificates';
 import VirtualRoom from './pages/VirtualRoom';
 import Login from './pages/Login';
+import CadastroMembro from './pages/membros/CadastroMembro.jsx';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -81,6 +82,7 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="members" element={<Members />} />
+          <Route path="cadastro" element={<CadastroMembro />} />
           <Route path="financial" element={<Financial />} />
           <Route path="certificates" element={<Certificates />} />
           <Route path="virtual-room" element={<VirtualRoom />} />

@@ -6,7 +6,7 @@ import CadastroMembro from "../pages/membros/CadastroMembro";
 import EditarMembro from "../pages/membros/EditarMembro";
 import ListagemMembros from "../pages/membros/ListagemMembros";
 
-// Páginas placeholder temporárias
+// Placeholder temporário
 const EmBreve = ({ titulo }) => (
   <div className="flex items-center justify-center h-screen text-gray-600 text-xl">
     {titulo} — Em breve 🚧
@@ -15,19 +15,20 @@ const EmBreve = ({ titulo }) => (
 
 export const AuthRoutes = ({ logout }) => (
   <Routes>
-    <Route path="/" element={<Dashboard onLogout={logout} />} />
-
-    {/* Módulo de Membros */}
-    <Route path="/membros" element={<Members />} />
+    {/* Rotas principais */}
+    <Route path="/dashboard" element={<Dashboard onLogout={logout} />} />
+    <Route path="/members" element={<Members />} />
     <Route path="/membros/cadastrar" element={<CadastroMembro />} />
     <Route path="/membros/editar/:id" element={<EditarMembro />} />
+    <Route path="/membros/listagem" element={<ListagemMembros />} />
 
-    {/* Placeholders dos módulos futuros */}
+    {/* Outros módulos */}
     <Route path="/financeiro" element={<EmBreve titulo="Financeiro" />} />
     <Route path="/certificados" element={<EmBreve titulo="Certificados" />} />
     <Route path="/sala-virtual" element={<EmBreve titulo="Sala Virtual" />} />
 
-    {/* Redirecionamento padrão */}
-    <Route path="*" element={<Navigate to="/" />} />
+    {/* Redirecionar / para /dashboard */}
+    <Route path="/" element={<Navigate to="/dashboard" />} />
+    <Route path="*" element={<Navigate to="/dashboard" />} />
   </Routes>
 );

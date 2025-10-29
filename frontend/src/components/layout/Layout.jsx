@@ -10,7 +10,7 @@ const Layout = () => {
 
   const modules = [
     { path: '/dashboard', name: 'Dashboard', icon: Home, status: 'complete' },
-    { path: '/members', name: 'Membros', icon: Users, status: 'complete' },
+    { path: '/membros', name: 'Membros', icon: Users, status: 'complete' },
     { path: '/financial', name: 'Financeiro', icon: DollarSign, status: 'upcoming' },
     { path: '/certificates', name: 'Certificados', icon: Award, status: 'upcoming' },
     { path: '/virtual-room', name: 'Sala Virtual', icon: Video, status: 'upcoming' },

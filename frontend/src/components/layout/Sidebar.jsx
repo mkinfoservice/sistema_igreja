@@ -5,19 +5,19 @@ import { Home, Users, DollarSign, Award, Video } from 'lucide-react';
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const modules = [
     { path: '/dashboard', name: 'Dashboard', icon: Home, status: 'complete' },
-    { path: '/members', name: 'Membros', icon: Users, status: 'complete' },
-    { path: '/financial', name: 'Financeiro', icon: DollarSign, status: 'upcoming' },
-    { path: '/certificates', name: 'Certificados', icon: Award, status: 'upcoming' },
-    { path: '/virtual-room', name: 'Sala Virtual', icon: Video, status: 'upcoming' },
+    { path: '/membros', name: 'Membros', icon: Users, status: 'complete' },
+    { path: '/financeiro', name: 'Financeiro', icon: DollarSign, status: 'upcoming' },
+    { path: '/certificados', name: 'Certificados', icon: Award, status: 'upcoming' },
+    { path: '/sala-virtual', name: 'Sala Virtual', icon: Video, status: 'upcoming' },
   ];
 
   return (
     <aside
       className={`
-      fixed lg:static inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out
-      ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      pt-16 lg:pt-0
-    `}
+        fixed lg:static inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        pt-16 lg:pt-0
+      `}
     >
       <nav className="p-4 space-y-2">
         {modules.map((module) => {
