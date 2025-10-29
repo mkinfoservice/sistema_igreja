@@ -2,10 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Users, Award, Video } from 'lucide-react';
 import CadastroMembro from '../pages/membros/CadastroMembro';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = ({ onLogout }) => {
   const [data, setData] = useState(null);
   const [mostrarCadastro, setMostrarCadastro] = useState(false);
+  const navigate = useNavigate();
+  const handleCadastroClick = () => {
+    navigate('/membros');
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,7 +78,7 @@ const Dashboard = ({ onLogout }) => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <button
-                onClick={() => setMostrarCadastro(true)}
+                onClick={() => handleCadastroClick(true)}
                 className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-3 px-4 font-medium transition-colors flex items-center justify-center space-x-2"
               >
                 <Users className="h-5 w-5" />
