@@ -1,247 +1,165 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // ← IMPORTA
-import { ArrowLeft } from 'lucide-react'; // ← IMPORTA ÍCONE
+import React, { useState } from "react";
 
-function CadastroMembro() {
-  const navigate = useNavigate(); // ← CRIA O NAVIGATE
-  
-  const [formData, setFormData] = useState({
-    nome_completo: '',
-    cpf: '',
-    rg: '',
-    data_nascimento: '',
-    endereco: '',
-    telefone: '',
-    email: '',
-    batizado: false,
-    data_batismo: '',
-    ministerio: '',
-    ativo: true,
-    genero: 'N',
-    idade: ''
+const CadastroMembro = ({ onBack }) => {
+  const [form, setForm] = useState({
+    nome: "",
+    email: "",
+    telefone: "",
+    cargo: "",
+    dataEntrada: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [mensagem, setMensagem] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMensagem("");
 
-    const payload = {
-      ...formData,
-      data_batismo: formData.data_batismo === '' ? null : formData.data_batismo,
-    };
+    // Simula um pequeno delay de salvamento
+    setTimeout(() => {
+      const membros = JSON.parse(localStorage.getItem("membros")) || [];
+      const novoMembro = { id: Date.now(), ...form };
+      localStorage.setItem("membros", JSON.stringify([...membros, novoMembro]));
 
-    try {
-      await axios.post('http://localhost:8000/api/membros/', payload);
-      alert('Membro cadastrado com sucesso!');
-      navigate('/dashboard'); // ← VOLTA PARA O DASHBOARD
-    } catch (error) {
-      if (error.response) {
-        console.error('Erro ao cadastrar membro:', error.response.data);
-        alert('Erro ao cadastrar membro: ' + JSON.stringify(error.response.data));
-      } else {
-        console.error('Erro ao cadastrar membro:', error.message);
-        alert('Erro desconhecido ao cadastrar membro: ');
-      }
-    }
+      setForm({
+        nome: "",
+        email: "",
+        telefone: "",
+        cargo: "",
+        dataEntrada: "",
+      });
+      setLoading(false);
+      setMensagem("✅ Membro cadastrado com sucesso!");
+    }, 600);
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Cabeçalho com botão Voltar */}
-      <div className="mb-6">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-gray-800">Cadastrar Novo Membro</h2>
         <button
-          onClick={() => navigate('/dashboard')}
-          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors"
+          onClick={onBack}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
         >
-          <ArrowLeft className="h-5 w-5" />
-          <span>Voltar ao Dashboard</span>
+          Voltar
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Cadastro de Membro</h1>
       </div>
 
-      {/* Formulário */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome Completo *</label>
-            <input 
-              type="text" 
-              name="nome_completo" 
-              value={formData.nome_completo} 
-              onChange={handleChange} 
-              placeholder="Nome completo" 
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-              required 
-            />
-          </div>
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+      >
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">Nome completo *</label>
+          <input
+            type="text"
+            name="nome"
+            value={form.nome}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">CPF *</label>
-              <input 
-                type="text" 
-                name="cpf" 
-                value={formData.cpf} 
-                onChange={handleChange} 
-                placeholder="000.000.000-00" 
-                className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                required 
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">RG</label>
-              <input 
-                type="text" 
-                name="rg" 
-                value={formData.rg} 
-                onChange={handleChange} 
-                placeholder="00.000.000-0" 
-                className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-              />
-            </div>
-          </div>
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">E-mail *</label>
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data de Nascimento *</label>
-              <input 
-                type="date" 
-                name="data_nascimento" 
-                value={formData.data_nascimento} 
-                onChange={handleChange} 
-                className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                required 
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Gênero</label>
-              <select 
-                name="genero" 
-                value={formData.genero} 
-                onChange={handleChange} 
-                className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">Telefone *</label>
+          <input
+            type="tel"
+            name="telefone"
+            value={form.telefone}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-600 mb-1">Cargo / Função</label>
+          <select
+            name="cargo"
+            value={form.cargo}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+          >
+            <option value="">Selecione...</option>
+            <option value="Membro">Membro</option>
+            <option value="Líder">Líder</option>
+            <option value="Pastor">Pastor</option>
+            <option value="Visitante">Visitante</option>
+          </select>
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm text-gray-600 mb-1">Data de Entrada</label>
+          <input
+            type="date"
+            name="dataEntrada"
+            value={form.dataEntrada}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        <div className="md:col-span-2 flex justify-end">
+          <button
+            type="submit"
+            disabled={loading}
+            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-white transition ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700"
+            }`}
+          >
+            {loading && (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
               >
-                <option value="M">Masculino</option>
-                <option value="F">Feminino</option>
-              </select>
-            </div>
-          </div>
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+            )}
+            {loading ? "Salvando..." : "Salvar Membro"}
+          </button>
+        </div>
+      </form>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-            <input 
-              type="text" 
-              name="endereco" 
-              value={formData.endereco} 
-              onChange={handleChange} 
-              placeholder="Rua, número, bairro, cidade" 
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-              <input 
-                type="text" 
-                name="telefone" 
-                value={formData.telefone} 
-                onChange={handleChange} 
-                placeholder="(00) 00000-0000" 
-                className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input 
-                type="email" 
-                name="email" 
-                value={formData.email} 
-                onChange={handleChange} 
-                placeholder="email@exemplo.com" 
-                className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-              />
-            </div>
-          </div>
-
-          <div className="border-t pt-4 mt-4">
-            <label className="flex items-center space-x-2">
-              <input 
-                type="checkbox" 
-                name="batizado" 
-                checked={formData.batizado} 
-                onChange={handleChange} 
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
-              />
-              <span className="text-sm font-medium text-gray-700">Batizado</span>
-            </label>
-          </div>
-
-          {formData.batizado && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data do Batismo</label>
-              <input 
-                type="date" 
-                name="data_batismo" 
-                value={formData.data_batismo} 
-                onChange={handleChange} 
-                className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-              />
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Ministério</label>
-            <input 
-              type="text" 
-              name="ministerio" 
-              value={formData.ministerio} 
-              onChange={handleChange} 
-              placeholder="Ex: Louvor, Intercessão, Jovens" 
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Idade</label>
-            <input 
-              type="number" 
-              name="idade" 
-              value={formData.idade} 
-              onChange={handleChange} 
-              placeholder="Idade" 
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-            />
-          </div>
-
-          {/* Botões */}
-          <div className="flex gap-3 pt-4 border-t">
-            <button 
-              type="submit" 
-              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition-colors"
-            >
-              Cadastrar Membro
-            </button>
-            <button 
-              type="button"
-              onClick={() => navigate('/dashboard')}
-              className="px-6 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 font-medium transition-colors"
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
-      </div>
+      {mensagem && (
+        <div className="text-green-600 font-medium text-sm">{mensagem}</div>
+      )}
     </div>
   );
-}
+};
 
 export default CadastroMembro;

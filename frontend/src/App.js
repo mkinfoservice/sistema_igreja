@@ -81,7 +81,7 @@ function App() {
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="members" element={<Members />} />
+          <Route path="membros" element={<Members />} />
           <Route path="cadastro" element={<CadastroMembro />} />
           <Route path="financial" element={<Financial />} />
           <Route path="certificates" element={<Certificates />} />

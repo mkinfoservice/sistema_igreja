@@ -17,7 +17,7 @@ export const AuthRoutes = ({ logout }) => (
   <Routes>
     {/* Rotas principais */}
     <Route path="/dashboard" element={<Dashboard onLogout={logout} />} />
-    <Route path="/members" element={<Members />} />
+    <Route path="/membros" element={<Members />} />
     <Route path="/membros/cadastrar" element={<CadastroMembro />} />
     <Route path="/membros/editar/:id" element={<EditarMembro />} />
     <Route path="/membros/listagem" element={<ListagemMembros />} />
