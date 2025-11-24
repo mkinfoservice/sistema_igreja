@@ -78,6 +78,9 @@ sistema_igreja/
 │   │   │   │   ├── Input.jsx
 │   │   │   │   └── Label.jsx
 │   │   │   └── PrivateRoute.js     # Rota protegida
+│   │   ├── utils/                 # Utilitários
+│   │   │   ├── validators.js      # Validações e máscaras (CPF, telefone, email)
+│   │   │   └── export.js         # Exportação CSV
 │   │   └── pages/
 │   │       ├── Login.js            # Página de login
 │   │       ├── Dashboard.jsx      # Dashboard principal
@@ -86,9 +89,9 @@ sistema_igreja/
 │   │       ├── Certificates.jsx   # Placeholder certificados
 │   │       ├── VirtualRoom.jsx    # Placeholder sala virtual
 │   │       └── membros/
-│   │           ├── CadastroMembro.jsx    # ⚠️ Usa localStorage
-│   │           ├── ListagemMembros.jsx   # ⚠️ Usa localStorage
-│   │           └── EditarMembro.jsx      # ✅ Integrado com API
+│   │           ├── CadastroMembro.jsx    # ✅ Integrado com API + Validações + Máscaras
+│   │           ├── ListagemMembros.jsx  # ✅ Integrado com API + Busca + Filtros + Paginação + Exportação
+│   │           └── EditarMembro.jsx     # ✅ Integrado com API
 │   │
 │   ├── package.json
 │   └── tailwind.config.js
@@ -153,26 +156,37 @@ sistema_igreja/
    - Exibe métricas básicas (hardcoded atualmente)
    - Cards de estatísticas e ações rápidas
 
-4. **Módulo de Membros - Parcialmente Funcional**
+4. **Módulo de Membros - ✅ TOTALMENTE FUNCIONAL**
+   - ✅ **CadastroMembro.jsx**: 
+     - Integrado com API backend (POST /api/membros/)
+     - Validação de CPF com dígitos verificadores
+     - Máscaras automáticas (CPF, telefone)
+     - Validação de email e telefone
+     - Feedback visual de erros
+   - ✅ **ListagemMembros.jsx**: 
+     - Integrado com API backend (GET /api/membros/)
+     - Busca em tempo real (nome, email, CPF, telefone)
+     - Filtros avançados (Status, Gênero, Ministério)
+     - Paginação (10 itens por página)
+     - Exportação para CSV
+     - Exclusão via API (DELETE /api/membros/{id}/)
+     - Navegação para edição
    - ✅ **EditarMembro.jsx**: Totalmente integrado com API backend
-   - ⚠️ **CadastroMembro.jsx**: Usa `localStorage` (NÃO integrado com API)
-   - ⚠️ **ListagemMembros.jsx**: Usa `localStorage` (NÃO integrado com API)
-   - ⚠️ **MembrosPage.jsx**: Integrado com API, mas não está sendo usado nas rotas
 
-5. **Componentes UI**
+5. **Utilitários**
+   - ✅ **validators.js**: Validação de CPF, telefone, email + máscaras
+   - ✅ **export.js**: Exportação de dados para CSV
+
+6. **Componentes UI**
    - Button, Card, Input, Label implementados
    - Design consistente com TailwindCSS
+   - Ícones com lucide-react
 
 ---
 
 ### ⚠️ **PROBLEMAS E INCONSISTÊNCIAS IDENTIFICADAS**
 
-1. **Cadastro de Membros Desconectado**
-   - `CadastroMembro.jsx` salva dados em `localStorage` ao invés de usar a API
-   - `ListagemMembros.jsx` lê de `localStorage` ao invés da API
-   - **Impacto**: Dados não são persistidos no banco de dados
-
-2. **Duplicação de Arquivos**
+1. **Duplicação de Arquivos**
    - `frontend/src/api.js` e `frontend/src/services/api.js` (ambos não utilizados)
    - `frontend/src/Login.js` e `frontend/src/pages/Login.js` (duplicado)
    - `frontend/src/pages/MembrosPage.jsx` existe mas não está nas rotas
@@ -214,15 +228,14 @@ sistema_igreja/
    - Agendamento de eventos
 
 #### Melhorias Necessárias
-1. **Integração Frontend/Backend**
-   - Conectar `CadastroMembro.jsx` com API
-   - Conectar `ListagemMembros.jsx` com API
-   - Usar dados reais do dashboard na interface
+1. **Dashboard com Dados Reais**
+   - Usar dados reais da API `/api/dashboard/` na interface
+   - Implementar gráficos com Chart.js usando dados reais
 
-2. **Validações**
-   - Validação de CPF no frontend e backend
-   - Validação de email
-   - Validação de telefone
+2. **Validações no Backend**
+   - Validação de CPF no backend (Django)
+   - Validação de email no backend
+   - Validação de telefone no backend
 
 3. **Tratamento de Erros**
    - Mensagens de erro amigáveis
@@ -323,6 +336,62 @@ Frontend estará disponível em `http://localhost:3000`
 
 ---
 
+## 🆕 Funcionalidades Recentes Implementadas
+
+### Módulo de Membros - Versão Completa
+
+#### ✅ Cadastro de Membros (`CadastroMembro.jsx`)
+- **Integração completa com API**: Dados são salvos no banco de dados via `POST /api/membros/`
+- **Validação de CPF**: Verifica dígitos verificadores em tempo real
+- **Máscaras automáticas**: 
+  - CPF: `000.000.000-00`
+  - Telefone: `(00) 00000-0000`
+- **Validações em tempo real**:
+  - CPF válido (11 dígitos + verificação de dígitos)
+  - Email válido (formato correto)
+  - Telefone válido (10 ou 11 dígitos)
+- **Feedback visual**: Campos ficam vermelhos quando inválidos
+- **Tratamento de erros**: Mensagens claras e específicas
+
+#### ✅ Listagem de Membros (`ListagemMembros.jsx`)
+- **Integração completa com API**: Busca membros via `GET /api/membros/`
+- **Busca em tempo real**: 
+  - Busca por nome, email, CPF ou telefone
+  - Filtragem instantânea enquanto digita
+- **Filtros avançados**:
+  - Status: Todos / Ativos / Inativos
+  - Gênero: Todos / Masculino / Feminino / Outro / Prefere não informar
+  - Ministério: Lista dinâmica baseada nos membros cadastrados
+- **Paginação**:
+  - 10 membros por página
+  - Navegação entre páginas
+  - Indicador de página atual
+- **Exportação CSV**:
+  - Exporta membros filtrados
+  - Formatação adequada (datas, booleanos)
+  - Compatível com Excel
+- **Exclusão integrada**: Via `DELETE /api/membros/{id}/`
+- **Navegação para edição**: Botão que leva para `/membros/editar/{id}`
+
+#### ✅ Utilitários Criados
+
+**`utils/validators.js`**:
+- `validarCPF()`: Valida CPF com cálculo de dígitos verificadores
+- `formatarCPF()`: Aplica máscara de CPF
+- `limparCPF()`: Remove formatação do CPF
+- `validarTelefone()`: Valida formato de telefone brasileiro
+- `formatarTelefone()`: Aplica máscara de telefone
+- `validarEmail()`: Valida formato de email
+- `formatarData()`: Formata data para exibição
+
+**`utils/export.js`**:
+- `exportarCSV()`: Exporta array de objetos para CSV
+- Formatação automática de datas e booleanos
+- Compatível com Excel (BOM UTF-8)
+- Mapeamento de campos para nomes amigáveis
+
+---
+
 ## 📍 Onde Você Parou
 
 ### ✅ **Concluído**
@@ -333,23 +402,31 @@ Frontend estará disponível em `http://localhost:3000`
 5. Dashboard API com métricas
 6. Layout e navegação do frontend
 7. Página de login funcional
-8. Edição de membros integrada com backend
+8. **Módulo de Membros COMPLETO**:
+   - ✅ Cadastro integrado com API + Validações + Máscaras
+   - ✅ Listagem integrada com API + Busca + Filtros + Paginação + Exportação CSV
+   - ✅ Edição integrada com backend
+   - ✅ Exclusão integrada com backend
+9. **Utilitários**:
+   - ✅ Validação de CPF com dígitos verificadores
+   - ✅ Máscaras automáticas (CPF, telefone)
+   - ✅ Validação de email e telefone
+   - ✅ Exportação para CSV
 
 ### 🔄 **Em Progresso / Incompleto**
-1. **Cadastro de Membros**: Formulário existe mas salva em `localStorage` ao invés da API
-2. **Listagem de Membros**: Lê de `localStorage` ao invés da API
-3. **Dashboard**: Interface existe mas usa dados hardcoded, não os dados reais da API
+1. **Dashboard**: Interface existe mas usa dados hardcoded, não os dados reais da API
 
 ### ⏳ **Próximas Prioridades**
-1. **Corrigir integração de membros** (alta prioridade)
-   - Conectar `CadastroMembro.jsx` com `POST /api/membros/`
-   - Conectar `ListagemMembros.jsx` com `GET /api/membros/`
-   - Remover uso de `localStorage` para membros
-
-2. **Melhorar Dashboard** (média prioridade)
+1. **Melhorar Dashboard** (alta prioridade)
    - Usar dados reais da API `/api/dashboard/`
-   - Implementar gráficos com Chart.js
-   - Adicionar loading states
+   - Implementar gráficos com Chart.js usando dados reais
+   - Adicionar loading states e tratamento de erros
+
+2. **Validações no Backend** (média prioridade)
+   - Validação de CPF no backend (Django)
+   - Validação de email no backend
+   - Validação de telefone no backend
+   - Mensagens de erro mais descritivas
 
 3. **Limpeza de código** (média prioridade)
    - Remover arquivos duplicados
@@ -365,23 +442,32 @@ Frontend estará disponível em `http://localhost:3000`
 
 ## 🎯 Próximos Passos Recomendados
 
-### Fase 1: Correções Críticas (1-2 dias)
+### Fase 1: Correções Críticas ✅ **CONCLUÍDA**
 1. ✅ Integrar `CadastroMembro.jsx` com API
 2. ✅ Integrar `ListagemMembros.jsx` com API
 3. ✅ Remover código de `localStorage` relacionado a membros
 4. ✅ Testar fluxo completo: cadastrar → listar → editar → excluir
 
-### Fase 2: Melhorias de UX (2-3 dias)
-1. ✅ Implementar dados reais no Dashboard
-2. ✅ Adicionar gráficos com Chart.js
-3. ✅ Melhorar tratamento de erros
-4. ✅ Adicionar feedback visual (toasts, loading)
+### Fase 2: Melhorias de UX ✅ **PARCIALMENTE CONCLUÍDA**
+1. ✅ Adicionar validações e máscaras no cadastro
+2. ✅ Implementar busca e filtros na listagem
+3. ✅ Adicionar paginação na listagem
+4. ✅ Implementar exportação CSV
+5. ✅ Melhorar tratamento de erros
+6. ✅ Adicionar feedback visual (loading, mensagens)
+7. ⏳ **PENDENTE**: Implementar dados reais no Dashboard
+8. ⏳ **PENDENTE**: Adicionar gráficos com Chart.js usando dados reais
 
-### Fase 3: Validações e Segurança (1-2 dias)
-1. ✅ Validação de CPF
-2. ✅ Validação de email e telefone
-3. ✅ Sanitização de inputs
-4. ✅ Rate limiting (opcional)
+### Fase 3: Validações e Segurança ✅ **PARCIALMENTE CONCLUÍDA**
+1. ✅ Validação de CPF no frontend (com dígitos verificadores)
+2. ✅ Validação de email no frontend
+3. ✅ Validação de telefone no frontend
+4. ✅ Máscaras automáticas (CPF, telefone)
+5. ⏳ **PENDENTE**: Validação de CPF no backend
+6. ⏳ **PENDENTE**: Validação de email no backend
+7. ⏳ **PENDENTE**: Validação de telefone no backend
+8. ⏳ **PENDENTE**: Sanitização de inputs no backend
+9. ⏳ **PENDENTE**: Rate limiting (opcional)
 
 ### Fase 4: Novos Módulos (1-2 semanas)
 1. ✅ Módulo Financeiro completo
@@ -448,21 +534,17 @@ psycopg2-binary
 
 ## 🐛 Problemas Conhecidos
 
-1. **Cadastro de membros não persiste no banco**
-   - **Causa**: `CadastroMembro.jsx` usa `localStorage`
-   - **Solução**: Integrar com `POST /api/membros/`
-
-2. **Listagem não mostra membros do banco**
-   - **Causa**: `ListagemMembros.jsx` lê de `localStorage`
-   - **Solução**: Integrar com `GET /api/membros/`
-
-3. **Dashboard mostra dados fictícios**
+1. **Dashboard mostra dados fictícios**
    - **Causa**: Valores hardcoded na interface
-   - **Solução**: Consumir dados de `/api/dashboard/`
+   - **Solução**: Consumir dados de `/api/dashboard/` e implementar gráficos com Chart.js
 
-4. **Arquivos duplicados**
+2. **Arquivos duplicados**
    - **Causa**: Desenvolvimento iterativo sem limpeza
-   - **Solução**: Remover arquivos não utilizados
+   - **Solução**: Remover arquivos não utilizados (`api.js`, `services/api.js`, `Login.js` duplicado)
+
+3. **Validações apenas no frontend**
+   - **Causa**: Validações de CPF, email e telefone só no frontend
+   - **Solução**: Implementar validações também no backend (Django serializers)
 
 ---
 
@@ -480,8 +562,15 @@ Este é um projeto em desenvolvimento ativo. Para contribuir:
 ## 📅 Última Atualização
 
 **Data**: Janeiro 2025  
-**Versão**: 0.1.0 (Desenvolvimento)  
-**Status**: ~50% completo
+**Versão**: 0.2.0 (Desenvolvimento)  
+**Status**: ~65% completo
+
+### Changelog v0.2.0
+- ✅ Módulo de Membros totalmente funcional
+- ✅ Validações e máscaras implementadas
+- ✅ Busca, filtros e paginação na listagem
+- ✅ Exportação CSV implementada
+- ✅ Utilitários de validação e exportação criados
 
 ---
 
