@@ -10,121 +10,87 @@ import {
   validarEmail,
 } from "../../utils/validators";
 
+import { api } from "../../services/apiClient";
+import { parseApiErrors } from "../../utils/parseApiErrors";
+
 /**
  * Componente de Cadastro de Membros
- * 
- * Este componente permite cadastrar novos membros na igreja.
- * 
- * MUDANÇAS REALIZADAS:
- * - ❌ REMOVIDO: Uso de localStorage para salvar membros
- * - ✅ ADICIONADO: Integração com API backend via POST /api/membros/
- * - ✅ ATUALIZADO: Campos do formulário para corresponder ao modelo Membro do backend
- * - ✅ ADICIONADO: Tratamento de erros da API
- * - ✅ ADICIONADO: Navegação automática após cadastro bem-sucedido
- * 
- * @param {Function} onBack - Função callback para voltar ao menu anterior (opcional)
  */
 const CadastroMembro = ({ onBack }) => {
-  // Estado do formulário - campos correspondem ao modelo Membro do backend
+  // Estado do formulário
   const [form, setForm] = useState({
-    nome_completo: "",        // Campo obrigatório
-    cpf: "",                  // Campo obrigatório, único no banco
-    rg: "",                   // Opcional
-    data_nascimento: "",      // Campo obrigatório
-    endereco: "",             // Opcional
-    telefone: "",             // Opcional
-    email: "",                // Opcional
-    batizado: false,          // Boolean, padrão false
-    data_batismo: "",         // Opcional, só aparece se batizado = true
-    ministerio: "",           // Opcional
-    genero: "N",              // Padrão: "Prefere não informar"
-    idade: "",                // Opcional
-    ativo: true,              // Padrão: true (membro ativo)
+    nome_completo: "",
+    cpf: "",
+    rg: "",
+    data_nascimento: "",
+    endereco: "",
+    telefone: "",
+    email: "",
+    batizado: false,
+    data_batismo: "",
+    ministerio: "",
+    genero: "N",
+    ativo: true,
   });
 
-  // Estados de controle da UI
-  const [loading, setLoading] = useState(false);           // Controla estado de carregamento
-  const [mensagem, setMensagem] = useState("");          // Mensagem de sucesso/erro
-  const [erro, setErro] = useState(null);                // Mensagem de erro específica
+  // ✅ ALTERAÇÃO: estado específico para erros por campo (DRF retorna assim: {cpf: ["..."]})
+  const [fieldErrors, setFieldErrors] = useState({});
 
-  // Hook do React Router para navegação
+  // Estados de controle da UI
+  const [loading, setLoading] = useState(false);
+  const [mensagem, setMensagem] = useState("");
+  const [erro, setErro] = useState(null);
+
   const navigate = useNavigate();
 
-  /**
-   * Função: handleChange
-   * 
-   * Atualiza o estado do formulário quando o usuário digita nos campos.
-   * 
-   * MUDANÇAS:
-   * - ✅ MANTIDO: Lógica básica de atualização de estado
-   * - ✅ MELHORADO: Suporte para diferentes tipos de input (text, checkbox, date)
-   * - ✅ ADICIONADO: Aplicação automática de máscaras (CPF, telefone)
-   * - ✅ ADICIONADO: Validação em tempo real de CPF
-   * 
-   * @param {Event} e - Evento do input (onChange)
-   */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     let valorFormatado = value;
 
-    // Aplica máscaras automaticamente conforme o campo
     if (name === "cpf") {
-      // Aplica máscara de CPF (000.000.000-00)
       valorFormatado = formatarCPF(value);
-      // Limita a 14 caracteres (11 dígitos + 3 caracteres de formatação)
-      if (valorFormatado.length > 14) {
-        valorFormatado = valorFormatado.slice(0, 14);
-      }
+      if (valorFormatado.length > 14) valorFormatado = valorFormatado.slice(0, 14);
+
+      // ✅ ALTERAÇÃO: limpa erro do backend do campo quando o usuário começa a editar
+      setFieldErrors((prev) => ({ ...prev, cpf: undefined }));
     } else if (name === "telefone") {
-      // Aplica máscara de telefone ((00) 00000-0000)
       valorFormatado = formatarTelefone(value);
-      // Limita a 15 caracteres
-      if (valorFormatado.length > 15) {
-        valorFormatado = valorFormatado.slice(0, 15);
-      }
+      if (valorFormatado.length > 15) valorFormatado = valorFormatado.slice(0, 15);
+
+      // ✅ ALTERAÇÃO: limpa erro do backend do campo quando o usuário começa a editar
+      setFieldErrors((prev) => ({ ...prev, telefone: undefined }));
+    } else if (name === "email") {
+      // ✅ ALTERAÇÃO: limpa erro do backend do campo quando o usuário começa a editar
+      setFieldErrors((prev) => ({ ...prev, email: undefined }));
+    } else if (name === "nome_completo") {
+      setFieldErrors((prev) => ({ ...prev, nome_completo: undefined }));
     }
 
-    // Se for checkbox, usa o valor checked, senão usa o valor formatado
     setForm((prevForm) => ({
       ...prevForm,
       [name]: type === "checkbox" ? checked : valorFormatado,
     }));
   };
 
-  /**
-   * Função: handleSubmit
-   * 
-   * Envia os dados do formulário para a API backend.
-   * 
-   * MUDANÇAS REALIZADAS:
-   * - ❌ REMOVIDO: setTimeout e localStorage.setItem
-   * - ✅ ADICIONADO: Requisição POST para /api/membros/
-   * - ✅ ADICIONADO: Autenticação JWT via header Authorization
-   * - ✅ ADICIONADO: Tratamento de erros da API
-   * - ✅ ADICIONADO: Validação de campos obrigatórios
-   * - ✅ ADICIONADO: Navegação automática após sucesso
-   * 
-   * @param {Event} e - Evento de submit do formulário
-   */
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Previne recarregamento da página
-    
-    // Limpa mensagens anteriores
+    e.preventDefault();
+
+    // ✅ ALTERAÇÃO: limpar erros/mensagens NO INÍCIO do submit (antes estava fora do componente, o que quebra o React)
     setMensagem("");
     setErro(null);
+    setFieldErrors({});
     setLoading(true);
 
     try {
-      // Obtém o token JWT do localStorage (armazenado no login)
+      // ✅ ALTERAÇÃO: não precisa checar token manualmente aqui se seu apiClient injeta Authorization.
+      // Mas manter a checagem dá uma mensagem melhor para o usuário em caso de sessão perdida.
       const token = localStorage.getItem("access_token");
-      
       if (!token) {
         throw new Error("Você precisa estar autenticado para cadastrar membros.");
       }
 
-      // VALIDAÇÕES ANTES DE ENVIAR
-      // Valida CPF (obrigatório e deve ser válido)
+      // ======= Validações Front (UX) =======
       const cpfLimpo = limparCPF(form.cpf);
       if (!cpfLimpo || cpfLimpo.length !== 11) {
         throw new Error("CPF deve ter 11 dígitos.");
@@ -133,7 +99,6 @@ const CadastroMembro = ({ onBack }) => {
         throw new Error("CPF inválido. Verifique os dígitos informados.");
       }
 
-      // Valida telefone (se preenchido, deve ser válido)
       if (form.telefone) {
         const telefoneLimpo = limparTelefone(form.telefone);
         if (!validarTelefone(telefoneLimpo)) {
@@ -141,56 +106,32 @@ const CadastroMembro = ({ onBack }) => {
         }
       }
 
-      // Valida email (se preenchido, deve ser válido)
       if (form.email && !validarEmail(form.email)) {
         throw new Error("Email inválido. Verifique o formato informado.");
       }
 
-      // Prepara os dados para envio
-      // Remove campos vazios opcionais para não enviar null/undefined
-      // IMPORTANTE: Envia CPF e telefone sem formatação (apenas números)
+      // ✅ ALTERAÇÃO: montar payload limpo e consistente (você tinha duplicidade de cpf no payload)
       const dadosParaEnvio = {
         nome_completo: form.nome_completo,
-        cpf: cpfLimpo, // CPF sem formatação (apenas números)
+        cpf: cpfLimpo,
         data_nascimento: form.data_nascimento,
         genero: form.genero,
         ativo: form.ativo,
         batizado: form.batizado,
-        // Campos opcionais - só envia se tiver valor
+
         ...(form.rg && { rg: form.rg }),
         ...(form.endereco && { endereco: form.endereco }),
-        ...(form.telefone && { telefone: limparTelefone(form.telefone) }), // Telefone sem formatação
+        ...(form.telefone && { telefone: limparTelefone(form.telefone) }),
         ...(form.email && { email: form.email }),
         ...(form.data_batismo && { data_batismo: form.data_batismo }),
         ...(form.ministerio && { ministerio: form.ministerio }),
-        ...(form.idade && { idade: parseInt(form.idade) }),
       };
 
-      // Faz a requisição POST para criar o membro
-      const response = await fetch("http://localhost:8000/api/membros/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Token JWT para autenticação
-        },
-        body: JSON.stringify(dadosParaEnvio),
-      });
+      // ✅ ALTERAÇÃO: usa api (axios) com endpoint correto /api/membros/
+      const resp = await api.post("/api/membros/", dadosParaEnvio);
+      const novoMembro = resp.data; // se quiser usar depois
 
-      // Verifica se a requisição foi bem-sucedida
-      if (!response.ok) {
-        // Tenta obter mensagem de erro da API
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.detail || 
-          errorData.message || 
-          `Erro ao cadastrar membro: ${response.status} ${response.statusText}`
-        );
-      }
-
-      // Se chegou aqui, o cadastro foi bem-sucedido
-      const novoMembro = await response.json();
-      
-      // Limpa o formulário
+      // ✅ Limpa o formulário após sucesso
       setForm({
         nome_completo: "",
         cpf: "",
@@ -203,36 +144,45 @@ const CadastroMembro = ({ onBack }) => {
         data_batismo: "",
         ministerio: "",
         genero: "N",
-        idade: "",
         ativo: true,
       });
 
-      // Mostra mensagem de sucesso
       setMensagem("✅ Membro cadastrado com sucesso!");
 
-      // Se houver callback onBack, chama após 1.5 segundos
-      // Caso contrário, navega para a listagem de membros
       setTimeout(() => {
-        if (onBack) {
-          onBack();
-        } else {
-          navigate("/membros");
-        }
+        if (onBack) onBack();
+        else navigate("/membros");
       }, 1500);
-
     } catch (err) {
-      // Trata erros de rede, validação ou autenticação
       console.error("Erro ao cadastrar membro:", err);
-      setErro(err.message || "Erro ao cadastrar membro. Tente novamente.");
+
+      // ✅ ALTERAÇÃO: parseApiErrors funciona com axios (err.response.data)
+      // e também se você lançar um objeto {data: ...}
+      const { fieldErrors: fe, globalError } = parseApiErrors(err);
+
+      // ✅ salva erros por campo para exibir embaixo dos inputs
+      if (fe && Object.keys(fe).length) {
+        setFieldErrors(fe);
+
+        // ✅ opcional: também mostra o primeiro erro como mensagem global no banner
+        const first = Object.values(fe).find(Boolean);
+        setErro(first || globalError || "Erro ao cadastrar membro.");
+        return;
+      }
+
+      setErro(globalError || err.message || "Erro ao cadastrar membro. Tente novamente.");
     } finally {
-      // Sempre desativa o loading, mesmo em caso de erro
       setLoading(false);
     }
   };
 
+  // ✅ ALTERAÇÃO: validação visual do CPF/telefone usando o valor LIMPO (máscara não atrapalha)
+  const cpfValidoVisual = !form.cpf || validarCPF(limparCPF(form.cpf));
+  const telefoneValidoVisual = !form.telefone || validarTelefone(limparTelefone(form.telefone));
+  const emailValidoVisual = !form.email || validarEmail(form.email);
+
   return (
     <div className="space-y-6">
-      {/* Cabeçalho com título e botão voltar */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-800">Cadastrar Novo Membro</h2>
         {onBack && (
@@ -245,7 +195,6 @@ const CadastroMembro = ({ onBack }) => {
         )}
       </div>
 
-      {/* Mensagens de erro e sucesso */}
       {erro && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
           {erro}
@@ -257,28 +206,31 @@ const CadastroMembro = ({ onBack }) => {
         </div>
       )}
 
-      {/* Formulário de cadastro */}
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
       >
-        {/* Nome Completo - OBRIGATÓRIO */}
+        {/* Nome Completo */}
         <div>
-          <label className="block text-sm text-gray-600 mb-1">
-            Nome completo *
-          </label>
+          <label className="block text-sm text-gray-600 mb-1">Nome completo *</label>
           <input
             type="text"
             name="nome_completo"
             value={form.nome_completo}
             onChange={handleChange}
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            className={`w-full border rounded-lg px-4 py-2 focus:ring-2 outline-none ${
+              fieldErrors.nome_completo ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+            }`}
             placeholder="Digite o nome completo"
           />
+          {/* ✅ ALTERAÇÃO: erro do backend por campo */}
+          {fieldErrors.nome_completo && (
+            <p className="text-xs text-red-600 mt-1">{fieldErrors.nome_completo}</p>
+          )}
         </div>
 
-        {/* CPF - OBRIGATÓRIO */}
+        {/* CPF */}
         <div>
           <label className="block text-sm text-gray-600 mb-1">CPF *</label>
           <input
@@ -287,22 +239,27 @@ const CadastroMembro = ({ onBack }) => {
             value={form.cpf}
             onChange={handleChange}
             required
-            className={`w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none ${
-              form.cpf && !validarCPF(form.cpf)
+            className={`w-full border rounded-lg px-4 py-2 focus:ring-2 outline-none ${
+              fieldErrors.cpf || !cpfValidoVisual
                 ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300"
+                : "border-gray-300 focus:ring-blue-500"
             }`}
             placeholder="000.000.000-00"
             maxLength="14"
           />
-          {form.cpf && !validarCPF(form.cpf) && (
-            <p className="text-xs text-red-600 mt-1">
-              CPF inválido. Verifique os dígitos informados.
-            </p>
+
+          {/* ✅ ALTERAÇÃO: prioridade pro erro do backend (CPF duplicado, etc.) */}
+          {fieldErrors.cpf ? (
+            <p className="text-xs text-red-600 mt-1">{fieldErrors.cpf}</p>
+          ) : (
+            form.cpf &&
+            !cpfValidoVisual && (
+              <p className="text-xs text-red-600 mt-1">CPF inválido. Verifique os dígitos informados.</p>
+            )
           )}
         </div>
 
-        {/* RG - OPCIONAL */}
+        {/* RG */}
         <div>
           <label className="block text-sm text-gray-600 mb-1">RG</label>
           <input
@@ -315,19 +272,22 @@ const CadastroMembro = ({ onBack }) => {
           />
         </div>
 
-        {/* Data de Nascimento - OBRIGATÓRIO */}
+        {/* Data de Nascimento */}
         <div>
-          <label className="block text-sm text-gray-600 mb-1">
-            Data de Nascimento *
-          </label>
+          <label className="block text-sm text-gray-600 mb-1">Data de Nascimento *</label>
           <input
             type="date"
             name="data_nascimento"
             value={form.data_nascimento}
             onChange={handleChange}
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            className={`w-full border rounded-lg px-4 py-2 focus:ring-2 outline-none ${
+              fieldErrors.data_nascimento ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+            }`}
           />
+          {fieldErrors.data_nascimento && (
+            <p className="text-xs text-red-600 mt-1">{fieldErrors.data_nascimento}</p>
+          )}
         </div>
 
         {/* Gênero */}
@@ -346,22 +306,7 @@ const CadastroMembro = ({ onBack }) => {
           </select>
         </div>
 
-        {/* Idade - OPCIONAL */}
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Idade</label>
-          <input
-            type="number"
-            name="idade"
-            value={form.idade}
-            onChange={handleChange}
-            min="0"
-            max="150"
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
-            placeholder="Idade"
-          />
-        </div>
-
-        {/* Endereço - OPCIONAL */}
+        {/* Endereço */}
         <div className="md:col-span-2">
           <label className="block text-sm text-gray-600 mb-1">Endereço</label>
           <input
@@ -374,7 +319,7 @@ const CadastroMembro = ({ onBack }) => {
           />
         </div>
 
-        {/* Telefone - OPCIONAL */}
+        {/* Telefone */}
         <div>
           <label className="block text-sm text-gray-600 mb-1">Telefone</label>
           <input
@@ -382,22 +327,26 @@ const CadastroMembro = ({ onBack }) => {
             name="telefone"
             value={form.telefone}
             onChange={handleChange}
-            className={`w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none ${
-              form.telefone && !validarTelefone(form.telefone)
+            className={`w-full border rounded-lg px-4 py-2 focus:ring-2 outline-none ${
+              fieldErrors.telefone || !telefoneValidoVisual
                 ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300"
+                : "border-gray-300 focus:ring-blue-500"
             }`}
             placeholder="(00) 00000-0000"
             maxLength="15"
           />
-          {form.telefone && !validarTelefone(form.telefone) && (
-            <p className="text-xs text-red-600 mt-1">
-              Telefone inválido. Deve ter 10 ou 11 dígitos.
-            </p>
+
+          {fieldErrors.telefone ? (
+            <p className="text-xs text-red-600 mt-1">{fieldErrors.telefone}</p>
+          ) : (
+            form.telefone &&
+            !telefoneValidoVisual && (
+              <p className="text-xs text-red-600 mt-1">Telefone inválido. Deve ter 10 ou 11 dígitos.</p>
+            )
           )}
         </div>
 
-        {/* E-mail - OPCIONAL */}
+        {/* Email */}
         <div>
           <label className="block text-sm text-gray-600 mb-1">E-mail</label>
           <input
@@ -405,21 +354,25 @@ const CadastroMembro = ({ onBack }) => {
             name="email"
             value={form.email}
             onChange={handleChange}
-            className={`w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none ${
-              form.email && !validarEmail(form.email)
+            className={`w-full border rounded-lg px-4 py-2 focus:ring-2 outline-none ${
+              fieldErrors.email || !emailValidoVisual
                 ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300"
+                : "border-gray-300 focus:ring-blue-500"
             }`}
             placeholder="email@exemplo.com"
           />
-          {form.email && !validarEmail(form.email) && (
-            <p className="text-xs text-red-600 mt-1">
-              Email inválido. Verifique o formato informado.
-            </p>
+
+          {fieldErrors.email ? (
+            <p className="text-xs text-red-600 mt-1">{fieldErrors.email}</p>
+          ) : (
+            form.email &&
+            !emailValidoVisual && (
+              <p className="text-xs text-red-600 mt-1">Email inválido. Verifique o formato informado.</p>
+            )
           )}
         </div>
 
-        {/* Ministério - OPCIONAL */}
+        {/* Ministério */}
         <div>
           <label className="block text-sm text-gray-600 mb-1">Ministério</label>
           <input
@@ -432,7 +385,7 @@ const CadastroMembro = ({ onBack }) => {
           />
         </div>
 
-        {/* Batizado - CHECKBOX */}
+        {/* Batizado */}
         <div className="md:col-span-2">
           <label className="flex items-center space-x-2">
             <input
@@ -446,12 +399,10 @@ const CadastroMembro = ({ onBack }) => {
           </label>
         </div>
 
-        {/* Data de Batismo - Só aparece se batizado = true */}
+        {/* Data Batismo */}
         {form.batizado && (
           <div className="md:col-span-2">
-            <label className="block text-sm text-gray-600 mb-1">
-              Data de Batismo
-            </label>
+            <label className="block text-sm text-gray-600 mb-1">Data de Batismo</label>
             <input
               type="date"
               name="data_batismo"
@@ -462,18 +413,15 @@ const CadastroMembro = ({ onBack }) => {
           </div>
         )}
 
-        {/* Botão de Submit */}
+        {/* Submit */}
         <div className="md:col-span-2 flex justify-end">
           <button
             type="submit"
             disabled={loading}
             className={`flex items-center gap-2 px-6 py-2 rounded-lg text-white transition ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-600 hover:bg-green-700"
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
             }`}
           >
-            {/* Spinner de loading */}
             {loading && (
               <svg
                 className="animate-spin h-5 w-5 text-white"
@@ -481,19 +429,8 @@ const CadastroMembro = ({ onBack }) => {
                 fill="none"
                 viewBox="0 0 24 24"
               >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8H4z"
-                ></path>
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
               </svg>
             )}
             {loading ? "Salvando..." : "Salvar Membro"}
