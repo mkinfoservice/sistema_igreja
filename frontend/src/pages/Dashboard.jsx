@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Users, Award, Video, TrendingUp, UserCheck, UserX } from 'lucide-react';
+import { api } from '../services/apiClient';
+import { Users, Award, Video, TrendingUp, UserCheck, } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   Chart as ChartJS,
@@ -75,23 +75,17 @@ const Dashboard = ({ onLogout }) => {
 
       const token = localStorage.getItem('access_token');
       if (!token) {
-        if (typeof onLogout === 'function') {
-          onLogout();
-        }
+        if (typeof onLogout === 'function') onLogout();
+          setLoading(false);
         return;
       }
 
       try {
-        const response = await axios.get('http://localhost:8000/api/dashboard/', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await api.get('/api/dashboard/');
         setData(response.data);
-      } catch (err) {
-        console.error('Erro ao buscar dados da dashboard:', err);
-        setErro('Erro ao carregar dados do dashboard. Tente novamente.');
-        if (err.response?.status === 401 && typeof onLogout === 'function') {
-          onLogout();
-        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do dashboard:', error);
+        setErro('Não foi possível carregar os dados do dashboard. Por favor, tente novamente mais tarde.');
       } finally {
         setLoading(false);
       }
