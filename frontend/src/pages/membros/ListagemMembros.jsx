@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { exportarCSV } from "../../utils/export";
 import { formatarCPF, formatarTelefone } from "../../utils/validators";
+import CadastroMembro from "./CadastroMembro.jsx";
 
 // ✅ ALTERAÇÃO: padroniza chamadas de API com o client (axios)
 import { api } from "../../services/apiClient";
@@ -13,12 +14,13 @@ import { parseApiErrors } from "../../utils/parseApiErrors";
 
 const ListagemMembros = ({ onBack }) => {
   const [membros, setMembros] = useState([]);
-
+  
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
   const [excluindo, setExcluindo] = useState(null);
 
   const [busca, setBusca] = useState("");
+  const [view, setView] = useState("lista");
   const [filtroStatus, setFiltroStatus] = useState("todos");
   const [filtroGenero, setFiltroGenero] = useState("todos");
   const [filtroMinisterio, setFiltroMinisterio] = useState("todos");
@@ -90,6 +92,10 @@ const ListagemMembros = ({ onBack }) => {
 
   const handleEditar = (id) => {
     navigate(`/membros/editar/${id}`);
+  };
+
+  const handleCadastrar = () => {
+    setView("cadastrar");
   };
 
   const membrosFiltrados = useMemo(() => {
@@ -208,6 +214,10 @@ const ListagemMembros = ({ onBack }) => {
     );
   }
 
+  if (view === "cadastrar") {
+    return <CadastroMembro onBack={() => setView("lista")} />;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -215,6 +225,12 @@ const ListagemMembros = ({ onBack }) => {
           Membros Cadastrados ({membrosFiltrados.length} de {membros.length})
         </h2>
         <div className="flex gap-2">
+          <button
+              onClick={handleCadastrar}
+              className="bg-green-600 text-white px-4 py-3 rounded-lg shadow hover:bg-green-700 transition"
+            >
+              Cadastrar Membro
+            </button>
           <button
             onClick={handleExportarCSV}
             disabled={membrosFiltrados.length === 0}
@@ -302,6 +318,7 @@ const ListagemMembros = ({ onBack }) => {
           </div>
         </div>
       </div>
+      
 
       {membrosFiltrados.length === 0 ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">

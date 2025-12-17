@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout.jsx';
 import Dashboard from './pages/Dashboard';
-import Members from './pages/Members.jsx';
+import Members from './pages/MembrosPage.jsx';
 import Financial from './pages/Financial';
 import Certificates from './pages/Certificates';
 import VirtualRoom from './pages/VirtualRoom';
@@ -10,6 +10,8 @@ import Login from './pages/Login';
 import CadastroMembro from './pages/membros/CadastroMembro.jsx';
 import EditarMembro from './pages/membros/EditarMembro.jsx';
 import { api } from './services/apiClient';
+import MembrosPage from './pages/MembrosPage.jsx';
+import ListagemMembros from './pages/membros/ListagemMembros.jsx';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -51,7 +53,7 @@ function App() {
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard onLogout={logout} />} />
-          <Route path="membros" element={<Members />} />
+          <Route path="membros" element={<ListagemMembros />} />
           <Route path="membros/editar/:id" element={<EditarMembro />} />
           <Route path="cadastro" element={<CadastroMembro />} />
           <Route path="financial" element={<Financial />} />

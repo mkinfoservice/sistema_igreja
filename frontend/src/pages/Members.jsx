@@ -1,7 +1,7 @@
 // src/pages/Members.jsx
 import React, { useState } from "react";
 import ListagemMembros from "./membros/ListagemMembros";
-import CadastroMembro from "./membros/CadastroMembro";
+import CadastroMembro from './pages/membros/CadastroMembro.jsx';
 
 const Members = () => {
   const [view, setView] = useState("menu");
