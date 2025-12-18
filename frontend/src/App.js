@@ -2,41 +2,41 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout.jsx';
 import Dashboard from './pages/Dashboard';
-import Members from './pages/MembrosPage.jsx';
 import Financial from './pages/Financial';
 import Certificates from './pages/Certificates';
 import VirtualRoom from './pages/VirtualRoom';
 import Login from './pages/Login';
 import CadastroMembro from './pages/membros/CadastroMembro.jsx';
 import EditarMembro from './pages/membros/EditarMembro.jsx';
-import { api } from './services/apiClient';
-import MembrosPage from './pages/MembrosPage.jsx';
 import ListagemMembros from './pages/membros/ListagemMembros.jsx';
+
+import { getAccessToken, clearAuthTokens, setOnLogout } from './services/apiClient.js';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const logout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    setIsAuthenticated(false);
-  };
-
   useEffect(() => {
-    // Só checa se existe token; requests vão validar e refreshar via interceptor
-    const accessToken = localStorage.getItem('access_token');
-    setIsAuthenticated(!!accessToken);
+    setIsAuthenticated(!!getAccessToken());
+
+    // Se o refresh falhar lá no apiCçlient, ele chama essa função para deslogar o usuário
+    setOnLogout(() => {
+      setIsAuthenticated(false);
+    });
+
   }, []);
 
   const handleLoginSuccess = (access, refresh) => {
-    localStorage.setItem('access_token', access);
-    localStorage.setItem('refresh_token', refresh);
+    // Login.js vai chamar setAuthTokens diretamente
     setIsAuthenticated(true);
   };
 
-  const PrivateRoute = ({ children }) => {
-    return isAuthenticated ? children : <Navigate to="/login" replace />;
+  const logout = () => {
+    clearAuthTokens();
+    setIsAuthenticated(false);
   };
+
+  const PrivateRoute = ({ children }) =>
+    isAuthenticated ? children : <Navigate to="/login" replace />;
 
   return (
     <BrowserRouter>
@@ -47,7 +47,7 @@ function App() {
           path="/"
           element={
             <PrivateRoute>
-              <Layout />
+              <Layout onLogout={logout} />
             </PrivateRoute>
           }
         >

@@ -1,84 +1,143 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+const API_URL =
+  (process.env.REACT_APP_API_URL?.replace(/\/$/, "") || "http://localhost:8000");
+
+// Se API_URL já é ".../api", então use só "token/..."
+const TOKEN_OBTAIN_ENDPOINT = "api/token/";
+const TOKEN_REFRESH_ENDPOINT = "api/token/refresh/";
 
 export const api = axios.create({
   baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Controle para evitar múltiplos refresh em paralelo
-let isRefreshing = false;
-let refreshPromise = null;
-
-function getAccessToken() {
+// ==== Token Helpers ====
+export function getAccessToken() {
   return localStorage.getItem("access_token");
 }
 
-function getRefreshToken() {
+export function getRefreshToken() {
   return localStorage.getItem("refresh_token");
 }
 
-function setAccessToken(token) {
-  localStorage.setItem("access_token", token);
-}
+export const setAuthTokens = (access, refresh) => {
+  if (access) localStorage.setItem("access_token", access);
+  if (refresh) localStorage.setItem("refresh_token", refresh);
+};
 
-function clearTokens() {
+export function clearAuthTokens() {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
 }
 
-// Anexa access token automaticamente
-api.interceptors.request.use((config) => {
-  const token = getAccessToken();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+// Permite o app registrar um callback de logout (ex: para redirecionar o usuário)
+let onLogoutCallback = null;
+export function setOnLogout(callback) {
+  onLogoutCallback = callback;
+}
 
-// Tenta refresh automaticamente se tomar 401
+function forceLogout() {
+  clearAuthTokens();
+  sessionStorage.setItem(
+    "auth_error", "Sua sessão expirou. Por favor, faça login novamente."
+  );
+
+  if (typeof onLogoutCallback === "function") 
+    onLogoutCallback();
+ }
+
+// ==== Interceptor para adicionar token de autenticação ====
+api.interceptors.request.use(
+  (config) => {
+    const token = getAccessToken();
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Refresh logic com fila de requests
+let isRefreshing = false;
+let refreshQueue = [];
+
+function processQueue(error, newAccessToken = null) {
+  refreshQueue.forEach((p) => {
+    if (error) p.reject(error);
+    else p.resolve(newAccessToken);
+  });
+  refreshQueue = [];
+}
+
+async function refreshAccessToken() {
+  const refresh = getRefreshToken();
+  if (!refresh) throw new Error("Sem refresh_token");
+
+  // usar axios "cru" aqui para evitar interceptor loop
+  const response = await axios.post(
+    `${API_URL}/${TOKEN_REFRESH_ENDPOINT}`,
+    { refresh },
+    { headers: { "Content-Type": "application/json" } }
+  );
+
+  // SimpleJWT normalmente retorna: { access: "..." }
+  const newAccess = response.data?.access;
+  if (!newAccess) throw new Error("Refresh não retornou access_token");
+
+  // mantém seu storage key "access_token"
+  setAuthTokens(newAccess, refresh);
+  return newAccess;
+}
+
+// Interceptor para lidar com 401 e tentar refresh do token
 api.interceptors.response.use(
-  (res) => res,
+  (response) => response,
   async (error) => {
-    const original = error.config;
+    const originalRequest = error.config;
 
-    // Se não tem response, é erro de rede (ERR_CONNECTION_*)
-    // Aqui NÃO adianta refresh. Só repassa o erro.
-    if (!error.response) {
+    if (!error.response) return Promise.reject(error);
+
+    const status = error.response.status;
+
+    if (status !== 401) return Promise.reject(error);
+    if (originalRequest?._retry) return Promise.reject(error);
+
+    // Não tenta refresh ao chamar o próprio endpoint de refresh
+    if (originalRequest?.url?.includes(TOKEN_REFRESH_ENDPOINT)) {
+      forceLogout();
       return Promise.reject(error);
     }
 
-    if (error.response.status !== 401) {
-      return Promise.reject(error);
-    }
+    originalRequest._retry = true;
 
-    // Evita loop infinito
-    if (original._retry) {
-      clearTokens();
-      return Promise.reject(error);
-    }
-    original._retry = true;
-
-    const refresh = getRefreshToken();
-    if (!refresh) {
-      clearTokens();
-      return Promise.reject(error);
-    }
-
-    // Lock do refresh
-    if (!isRefreshing) {
-      isRefreshing = true;
-      refreshPromise = api
-        .post("/api/token/refresh/", { refresh })
-        .then((r) => {
-          setAccessToken(r.data.access);
-          return r.data.access;
-        })
-        .finally(() => {
-          isRefreshing = false;
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        refreshQueue.push({
+          resolve: (token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(api(originalRequest));
+          },
+          reject,
         });
+      });
     }
 
-    const newAccess = await refreshPromise;
-    original.headers.Authorization = `Bearer ${newAccess}`;
-    return api(original);
+    isRefreshing = true;
+
+    try {
+      const newAccess = await refreshAccessToken();
+      processQueue(null, newAccess);
+
+      originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+      return api(originalRequest);
+    } catch (err) {
+      processQueue(err, null);
+      forceLogout();
+      return Promise.reject(err);
+    } finally {
+      isRefreshing = false;
+    }
   }
 );

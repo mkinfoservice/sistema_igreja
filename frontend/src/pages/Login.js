@@ -1,30 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { api, setAuthTokens } from '../services/apiClient.js';
 
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState(null);
-  const navigate = useNavigate(); //  hook de navegação
+  const [erro, setErro] = useState('null');
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    const msg = sessionStorage.getItem("auth_error");
+    if (msg) {
+      setErro(msg);
+      sessionStorage.removeItem("auth_error");
+    }
+  }, []);
+
+  async function handleSubmit(e) {
     e.preventDefault();
     setErro(null);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/token/', {
+      const res = await api.post('api/token/', {
         username,
-        password: senha
+        password: senha,
       });
 
-      onLoginSuccess(response.data.access, response.data.refresh);
-      navigate('/dashboard', { replace: true });
+      setAuthTokens(res.data.access, res.data.refresh);
+      onLoginSuccess(res.data.access, res.data.refresh);
+      navigate('/dashboard');
     } catch (err) {
+      const msg = err?.response?.data?.detail || 'Erro no login. Verifique suas credenciais.';
+      setErro(msg);
       console.error(err);
-      setErro('Credenciais inválidas');
     }
-  };
+    }
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-200">

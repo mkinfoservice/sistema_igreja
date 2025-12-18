@@ -7,7 +7,7 @@ import { formatarCPF, formatarTelefone } from "../../utils/validators";
 import CadastroMembro from "./CadastroMembro.jsx";
 
 // ✅ ALTERAÇÃO: padroniza chamadas de API com o client (axios)
-import { api } from "../../services/apiClient";
+import { api  } from "../../services/apiClient";
 
 // ✅ ALTERAÇÃO: padroniza parse de erros DRF (cpf/email/telefone/detail)
 import { parseApiErrors } from "../../utils/parseApiErrors";
@@ -35,16 +35,17 @@ const ListagemMembros = ({ onBack }) => {
     setErro(null);
 
     try {
-      // ✅ ALTERAÇÃO: se não tiver token, já falha cedo com mensagem clara
-      const token = localStorage.getItem("access_token");
-      if (!token) {
-        throw new Error("Você precisa estar autenticado para visualizar membros.");
-      }
-
+     
       // ✅ ALTERAÇÃO: usa axios client, sem URL hardcoded
       const resp = await api.get("/api/membros/");
       setMembros(resp.data);
     } catch (err) {
+      if (err.response?.status === 401) {
+        setErro("Sua sessão expirou. Por favor, faça login novamente.");
+        navigate("/login");
+        return;
+      }
+
       console.error("Erro ao buscar membros:", err);
 
       // ✅ ALTERAÇÃO: parseApiErrors pega 'detail' do DRF (ex: "As credenciais..."
@@ -66,11 +67,6 @@ const ListagemMembros = ({ onBack }) => {
     setExcluindo(id);
 
     try {
-      // ✅ ALTERAÇÃO: token check (melhor UX em caso de sessão perdida)
-      const token = localStorage.getItem("access_token");
-      if (!token) {
-        throw new Error("Você precisa estar autenticado para excluir membros.");
-      }
 
       // ✅ ALTERAÇÃO: usa axios client, sem URL hardcoded
       await api.delete(`/api/membros/${id}/`);
